@@ -9,3 +9,8 @@
 .cxx
 *.apk
 *.aab
+
+build/
+**/build/
+.gradle/
+**/.gradle/
