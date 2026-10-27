@@ -20,6 +20,14 @@ internal class EkycRepository(
         }
 
         val client = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val request = original.newBuilder()
+                    .header("User-Agent", "ezSign-Android")
+                    .header("Accept", "application/json")
+                    .build()
+                chain.proceed(request)
+            }
             .addInterceptor(logging)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -40,16 +48,31 @@ internal class EkycRepository(
     }
 
     private val bearerToken: String
-        get() = if (authToken.startsWith("Bearer ")) authToken else "Bearer $authToken"
+        get() {
+            var clean = authToken.trim()
+            if (clean.startsWith("\"") && clean.endsWith("\"")) {
+                clean = clean.substring(1, clean.length - 1).trim()
+            }
+            if (clean.startsWith("Bearer ", ignoreCase = true)) {
+                clean = clean.substring(7).trim()
+            }
+            clean = clean.replace("\n", "").replace("\r", "").replace(" ", "").trim()
+            return "Bearer $clean"
+        }
 
     private fun extractErrorMessage(errorBodyStr: String?, defaultMessage: String): String {
         if (errorBodyStr.isNullOrBlank()) return defaultMessage
         return try {
             val json = org.json.JSONObject(errorBodyStr)
-            when {
+            val msg = when {
                 json.has("message") && !json.isNull("message") -> json.getString("message")
                 json.has("error") && !json.isNull("error") -> json.getString("error")
                 else -> defaultMessage
+            }
+            if (msg.contains("JWT", ignoreCase = true) || msg.contains("Unauthorized", ignoreCase = true)) {
+                "Sesi token tidak valid atau kadaluarsa ($msg). Pastikan token masih aktif dan Base URL sesuai environment akun Anda."
+            } else {
+                msg
             }
         } catch (_: Exception) {
             errorBodyStr

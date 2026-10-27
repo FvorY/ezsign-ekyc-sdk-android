@@ -48,6 +48,16 @@ class MainActivity : AppCompatActivity() {
             launchEkyc()
         }
 
+        binding.btnEnvDev.setOnClickListener {
+            binding.etBaseUrl.setText("https://gtm.myesign.id/api")
+        }
+        binding.btnEnvStg.setOnClickListener {
+            binding.etBaseUrl.setText("https://devapi.mesign.id/api")
+        }
+        binding.btnEnvProd.setOnClickListener {
+            binding.etBaseUrl.setText("https://api.ezsign.id/api")
+        }
+
         binding.cardSignDoc.setOnClickListener { handleServiceClick("Tanda Tangani Dokumen") }
         binding.cardUploadDoc.setOnClickListener { handleServiceClick("Kirim Dokumen") }
         binding.cardSeal.setOnClickListener { handleServiceClick("Segel Elektronik") }
