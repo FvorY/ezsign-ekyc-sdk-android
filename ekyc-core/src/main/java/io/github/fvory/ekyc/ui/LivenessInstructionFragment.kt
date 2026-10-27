@@ -62,7 +62,7 @@ internal class LivenessInstructionFragment : Fragment() {
     }
 
     private fun prepareAndStartLiveness() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             binding.progressBar.visibility = View.VISIBLE
             binding.btnStartLiveness.isEnabled = false
 
@@ -102,7 +102,7 @@ internal class LivenessInstructionFragment : Fragment() {
             override fun onPreDetectFinish(errorCode: Int, errorMessage: String?) {
                 if (errorCode != 1000) {
                     activity.runOnUiThread {
-                        Toast.makeText(context, errorMessage ?: "Deteksi gagal dimulai ($errorCode)", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, describeStartError(errorCode, errorMessage), Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -127,6 +127,21 @@ internal class LivenessInstructionFragment : Fragment() {
                 // Optional local video file callback
             }
         })
+    }
+
+    /**
+     * Megvii validates its license against the host app's package name. AUTHENTICATION_FAIL /
+     * bundleid_error means that package name is not registered for the ezSign Megvii account.
+     */
+    private fun describeStartError(errorCode: Int, errorMessage: String?): String {
+        val raw = errorMessage ?: "Deteksi gagal dimulai ($errorCode)"
+        val upper = raw.uppercase()
+        if (upper.contains("AUTHENTICATION_FAIL") || upper.contains("BUNDLEID")) {
+            val packageName = requireContext().packageName
+            return "Lisensi liveness menolak aplikasi $packageName. " +
+                "Package name ini harus didaftarkan pada akun Megvii ezSign. ($raw)"
+        }
+        return raw
     }
 
     override fun onDestroyView() {

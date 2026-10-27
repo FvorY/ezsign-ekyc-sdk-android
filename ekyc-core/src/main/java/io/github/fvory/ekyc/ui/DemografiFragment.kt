@@ -49,7 +49,7 @@ internal class DemografiFragment : Fragment() {
     }
 
     private fun checkStatus() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             binding.progressBar.visibility = View.VISIBLE
             binding.btnContinue.isEnabled = false
 
@@ -58,8 +58,9 @@ internal class DemografiFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.btnContinue.isEnabled = true
                     if (res.data?.canEkyc == false) {
-                        Toast.makeText(context, res.message ?: "Akun tidak dapat melakukan eKYC", Toast.LENGTH_LONG).show()
-                        activity?.finish()
+                        val message = res.message ?: "Akun tidak dapat melakukan eKYC"
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                        (activity as? EzsignEkycActivity)?.finishWithError("EKYC_NOT_ALLOWED", message)
                     }
                 }
                 .onFailure {
@@ -122,7 +123,7 @@ internal class DemografiFragment : Fragment() {
     }
 
     private fun submitDemografi(nik: String, name: String, birthDate: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             binding.progressBar.visibility = View.VISIBLE
             binding.btnContinue.isEnabled = false
 

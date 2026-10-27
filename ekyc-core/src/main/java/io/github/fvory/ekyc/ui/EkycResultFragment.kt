@@ -37,7 +37,7 @@ internal class EkycResultFragment : Fragment() {
     }
 
     private fun finalizeEkyc() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             binding.resultProgress.visibility = View.VISIBLE
             binding.btnFinish.isEnabled = false
 
@@ -53,7 +53,10 @@ internal class EkycResultFragment : Fragment() {
                 binding.btnFinish.isEnabled = true
                 binding.btnFinish.text = "Tutup"
                 binding.btnFinish.setOnClickListener {
-                    activity?.finish()
+                    (activity as? EzsignEkycActivity)?.finishWithError(
+                        "LIVENESS_SUBMIT_FAILED",
+                        binding.tvResultDesc.text.toString()
+                    )
                 }
                 return@launch
             }
@@ -75,7 +78,10 @@ internal class EkycResultFragment : Fragment() {
                 binding.btnFinish.isEnabled = true
                 binding.btnFinish.text = "Tutup"
                 binding.btnFinish.setOnClickListener {
-                    activity?.finish()
+                    (activity as? EzsignEkycActivity)?.finishWithError(
+                        "UPDATE_PROFILE_FAILED",
+                        binding.tvResultDesc.text.toString()
+                    )
                 }
                 return@launch
             }
