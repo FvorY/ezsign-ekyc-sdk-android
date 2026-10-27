@@ -73,7 +73,7 @@ internal class EkycRepository(
         }
     }
 
-    suspend fun getEkycStatus(): Result<ApiResponse<EkycStatusData>> = runCatching {
+    suspend fun getEkycStatus(): Result<ApiResponse<EkycStatusData>> = apiResult {
         val res = api.getEkycStatus(bearerToken)
         if (!res.isSuccessful) {
             throw Exception(extractErrorMessage(res.errorBody()?.string(), "Gagal memeriksa status eKYC"))
@@ -85,7 +85,7 @@ internal class EkycRepository(
         body
     }
 
-    suspend fun checkDemografi(nama: String, nik: String, birthDate: String): Result<ApiResponse<Any>> = runCatching {
+    suspend fun checkDemografi(nama: String, nik: String, birthDate: String): Result<ApiResponse<Any>> = apiResult {
         val req = DemografiCheckRequest(nama = nama, nik = nik, birthDate = birthDate)
         val resCheck = api.checkData(bearerToken, req)
         if (!resCheck.isSuccessful) {
@@ -116,7 +116,7 @@ internal class EkycRepository(
         demoBody
     }
 
-    suspend fun validatePhone(phone: String): Result<ApiResponse<ValidatePhoneData>> = runCatching {
+    suspend fun validatePhone(phone: String): Result<ApiResponse<ValidatePhoneData>> = apiResult {
         val req = ValidatePhoneRequest(phone = phone)
         val res = api.validatePhone(bearerToken, req)
         if (!res.isSuccessful) {
@@ -129,7 +129,7 @@ internal class EkycRepository(
         body
     }
 
-    suspend fun verifyOtp(phone: String, otp: String, verifyToken: String?): Result<ApiResponse<VerifyOtpData>> = runCatching {
+    suspend fun verifyOtp(phone: String, otp: String, verifyToken: String?): Result<ApiResponse<VerifyOtpData>> = apiResult {
         val req = VerifyOtpRequest(phoneNumber = phone, otp = otp, token = verifyToken)
         val res = api.verifyOtp(bearerToken, req)
         if (!res.isSuccessful) {
@@ -142,7 +142,7 @@ internal class EkycRepository(
         body
     }
 
-    suspend fun getBizToken(): Result<ApiResponse<BizTokenData>> = runCatching {
+    suspend fun getBizToken(): Result<ApiResponse<BizTokenData>> = apiResult {
         val res = api.getBizToken(bearerToken)
         if (!res.isSuccessful) {
             throw Exception(extractErrorMessage(res.errorBody()?.string(), "Gagal mendapatkan biz token"))
@@ -154,7 +154,7 @@ internal class EkycRepository(
         body
     }
 
-    suspend fun submitLiveness(bizToken: String, livenessId: String): Result<ApiResponse<Any>> = runCatching {
+    suspend fun submitLiveness(bizToken: String, livenessId: String): Result<ApiResponse<Any>> = apiResult {
         val textMedia = "text/plain".toMediaTypeOrNull()
         val bizTokenBody = bizToken.toRequestBody(textMedia)
         val verifyIdBody = livenessId.toRequestBody(textMedia)
@@ -180,7 +180,7 @@ internal class EkycRepository(
         otp: String,
         bizToken: String,
         verifyToken: String? = null
-    ): Result<ApiResponse<Any>> = runCatching {
+    ): Result<ApiResponse<Any>> = apiResult {
         val req = UpdateMobileRequest(
             nama = nama,
             nik = nik,
@@ -201,7 +201,7 @@ internal class EkycRepository(
         body
     }
 
-    suspend fun refreshAuth(): Result<ApiResponse<AuthRefreshData>> = runCatching {
+    suspend fun refreshAuth(): Result<ApiResponse<AuthRefreshData>> = apiResult {
         val res = api.refreshAuth(bearerToken)
         if (!res.isSuccessful) {
             throw Exception(extractErrorMessage(res.errorBody()?.string(), "Gagal memperbarui sesi"))

@@ -49,7 +49,7 @@ internal class OtpFragment : Fragment() {
         }
         binding.layoutPhone.error = null
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             binding.progressBar.visibility = View.VISIBLE
             binding.btnSendOtp.isEnabled = false
 
@@ -102,7 +102,7 @@ internal class OtpFragment : Fragment() {
         }
         binding.layoutOtp.error = null
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             binding.progressBar.visibility = View.VISIBLE
             binding.btnVerifyOtp.isEnabled = false
 

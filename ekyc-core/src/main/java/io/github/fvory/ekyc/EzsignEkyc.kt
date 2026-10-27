@@ -53,7 +53,7 @@ object EzsignEkyc {
         }
 
         override fun parseResult(resultCode: Int, intent: Intent?): EkycResult {
-            return parseResult(resultCode, intent)
+            return EzsignEkyc.parseResult(resultCode, intent)
         }
     }
 }
