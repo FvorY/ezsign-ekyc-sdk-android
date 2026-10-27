@@ -3,7 +3,6 @@ package io.github.fvory.ekyc.api
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -15,10 +14,6 @@ internal class EkycRepository(
     private val api: EkycApiService
 
     init {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val original = chain.request()
@@ -28,7 +23,6 @@ internal class EkycRepository(
                     .build()
                 chain.proceed(request)
             }
-            .addInterceptor(logging)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
@@ -184,7 +178,8 @@ internal class EkycRepository(
         birthDate: String,
         phone: String,
         otp: String,
-        bizToken: String
+        bizToken: String,
+        verifyToken: String? = null
     ): Result<ApiResponse<Any>> = runCatching {
         val req = UpdateMobileRequest(
             nama = nama,
@@ -192,7 +187,8 @@ internal class EkycRepository(
             birthDate = birthDate,
             phone = phone,
             otp = otp,
-            bizToken = bizToken
+            bizToken = bizToken,
+            token = verifyToken
         )
         val res = api.updateMobile(bearerToken, req)
         if (!res.isSuccessful) {

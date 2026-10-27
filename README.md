@@ -2,6 +2,12 @@
 
 Native Android SDK (Kotlin) untuk alur verifikasi identitas elektronik (eKYC) ezSign, mencakup verifikasi demografi kependudukan, validasi OTP SMS, serta integrasi Megvii FaceID Active Liveness Detection.
 
+## Demo terbaru
+
+Unduh [demo Android dan iOS](https://github.com/FvorY/ezsign-ekyc-sdk-ios/releases/tag/demo-ekyc-1.1).
+
+Pembaruan ini menyesuaikan font, ikon, tombol, jarak, dan latar dengan acuan Flutter, serta memperbaiki penerusan token OTP dan endpoint refresh. IPA memerlukan signing sebelum dipasang. Ilustrasi identitas masih memakai PNG asli 245×210 piksel sehingga belum setajam aset vektor pada layar padat piksel.
+
 ## Fitur
 
 * **Pemeriksaan Status eKYC:** Validasi eligibility akun dan kuota verifikasi.

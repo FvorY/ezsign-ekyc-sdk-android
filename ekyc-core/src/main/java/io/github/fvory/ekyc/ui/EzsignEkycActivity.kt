@@ -30,6 +30,7 @@ internal class EzsignEkycActivity : AppCompatActivity() {
 
         viewModel.init(config)
         binding.toolbar.title = config.title
+        binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
         binding.toolbar.setNavigationOnClickListener {
             finishCancelled()
         }
@@ -42,6 +43,7 @@ internal class EzsignEkycActivity : AppCompatActivity() {
     }
 
     fun navigateToOtp() {
+        binding.toolbar.title = "Verification Phone"
         supportFragmentManager.commit {
             replace(R.id.fragmentContainer, OtpFragment())
             addToBackStack(null)
@@ -49,6 +51,7 @@ internal class EzsignEkycActivity : AppCompatActivity() {
     }
 
     fun navigateToLivenessInstruction() {
+        binding.toolbar.title = "Active Liveness Check"
         supportFragmentManager.commit {
             replace(R.id.fragmentContainer, LivenessInstructionFragment())
             addToBackStack(null)

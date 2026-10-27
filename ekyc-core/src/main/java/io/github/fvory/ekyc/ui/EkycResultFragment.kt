@@ -64,7 +64,8 @@ internal class EkycResultFragment : Fragment() {
                 birthDate = viewModel.birthDate,
                 phone = viewModel.phone,
                 otp = viewModel.otp,
-                bizToken = viewModel.bizToken
+                bizToken = viewModel.bizToken,
+                verifyToken = viewModel.verifyToken
             )
 
             if (updateRes.isFailure) {

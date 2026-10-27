@@ -31,20 +31,22 @@ internal class BackgroundShapeView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val w = width.toFloat()
-        val h = height.toFloat()
+        val density = resources.displayMetrics.density
+        val h = 400f * density
+        val lowerHeight = h + 30f * density
 
         // Shadow/lower curve
         pathShadow.reset()
-        pathShadow.lineTo(0f, h - 140f)
-        pathShadow.quadTo(w / 2f, h + 30f, w, h - 140f)
+        pathShadow.lineTo(0f, lowerHeight - 170f * density)
+        pathShadow.quadTo(w / 2f, lowerHeight, w, lowerHeight - 170f * density)
         pathShadow.lineTo(w, 0f)
         pathShadow.close()
         canvas.drawPath(pathShadow, shadowPaint)
 
         // Main curve
         pathPrimary.reset()
-        pathPrimary.lineTo(0f, h - 170f)
-        pathPrimary.quadTo(w / 2f, h, w, h - 170f)
+        pathPrimary.lineTo(0f, h - 170f * density)
+        pathPrimary.quadTo(w / 2f, h, w, h - 170f * density)
         pathPrimary.lineTo(w, 0f)
         pathPrimary.close()
         canvas.drawPath(pathPrimary, primaryPaint)

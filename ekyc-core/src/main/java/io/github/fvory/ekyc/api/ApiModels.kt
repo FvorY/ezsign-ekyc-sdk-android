@@ -54,7 +54,8 @@ data class UpdateMobileRequest(
     @SerializedName("birthDate") val birthDate: String,
     @SerializedName("phone") val phone: String,
     @SerializedName("otp") val otp: String,
-    @SerializedName("bizToken") val bizToken: String
+    @SerializedName("bizToken") val bizToken: String,
+    @SerializedName("token") val token: String? = null
 )
 
 data class AuthRefreshData(

@@ -67,7 +67,7 @@ interface EkycApiService {
         @Body request: UpdateMobileRequest
     ): Response<ApiResponse<Any>>
 
-    @POST("auth/refresh")
+    @POST("auth/user/refresh")
     suspend fun refreshAuth(
         @Header("Authorization") token: String
     ): Response<ApiResponse<AuthRefreshData>>
