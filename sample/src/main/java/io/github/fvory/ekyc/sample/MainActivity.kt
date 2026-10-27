@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun launchEkyc() {
         val token = binding.etAuthToken.text?.toString()?.trim().orEmpty()
-        val baseUrl = binding.etBaseUrl.text?.toString()?.trim().orEmpty().ifEmpty { "https://api.ezsign.id" }
+        val baseUrl = binding.etBaseUrl.text?.toString()?.trim().orEmpty().ifEmpty { "https://gtm.myesign.id/api" }
 
         if (token.isEmpty()) {
             binding.layoutAuthToken.error = "Masukkan Bearer Auth Token terlebih dahulu"
