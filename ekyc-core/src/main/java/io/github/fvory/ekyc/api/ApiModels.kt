@@ -26,7 +26,7 @@ data class VerifyNikRequest(
 data class ValidatePhoneRequest(
     @SerializedName("phone") val phone: String,
     @SerializedName("otpType") val otpType: Int = 1,
-    @SerializedName("menu") val menu: String = "register_update"
+    @SerializedName("menu") val menu: String = "register_phone_number_validation"
 )
 
 data class ValidatePhoneData(
