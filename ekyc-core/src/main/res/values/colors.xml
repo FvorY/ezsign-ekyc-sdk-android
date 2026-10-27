@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ekyc_primary">#15C1E7</color>
+    <color name="ekyc_primary_dark">#0FA7C9</color>
+    <color name="ekyc_info">#55C9E9</color>
+    <color name="ekyc_background">#F5F6FA</color>
+    <color name="ekyc_card_background">#FFFFFF</color>
+    <color name="ekyc_text_primary">#4F4F4F</color>
+    <color name="ekyc_text_secondary">#7B7B7B</color>
+    <color name="ekyc_text_muted">#AAAAAA</color>
+    <color name="ekyc_border">#E0E0E0</color>
+    <color name="ekyc_danger">#F2994A</color>
+    <color name="ekyc_success">#219653</color>
+</resources>
