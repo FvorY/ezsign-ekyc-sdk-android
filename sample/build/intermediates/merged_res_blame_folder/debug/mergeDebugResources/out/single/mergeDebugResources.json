@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "io.github.fvory.ekyc.sample-debug-39:/layout_activity_main.xml.flat",
+        "source": "io.github.fvory.ekyc.sample-main-41:/layout/activity_main.xml"
+    },
+    {
+        "merged": "io.github.fvory.ekyc.sample-debug-39:/drawable_badge_status_success.xml.flat",
+        "source": "io.github.fvory.ekyc.sample-main-41:/drawable/badge_status_success.xml"
+    },
+    {
+        "merged": "io.github.fvory.ekyc.sample-debug-39:/drawable_badge_status_warning.xml.flat",
+        "source": "io.github.fvory.ekyc.sample-main-41:/drawable/badge_status_warning.xml"
+    }
+]

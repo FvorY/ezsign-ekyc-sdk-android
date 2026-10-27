@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ekyc_background">#F5F6FA</color>
+    <color name="ekyc_border">#E0E0E0</color>
+    <color name="ekyc_card_background">#FFFFFF</color>
+    <color name="ekyc_danger">#F2994A</color>
+    <color name="ekyc_info">#55C9E9</color>
+    <color name="ekyc_primary">#15C1E7</color>
+    <color name="ekyc_primary_dark">#0FA7C9</color>
+    <color name="ekyc_success">#219653</color>
+    <color name="ekyc_text_muted">#AAAAAA</color>
+    <color name="ekyc_text_primary">#4F4F4F</color>
+    <color name="ekyc_text_secondary">#7B7B7B</color>
+    <string name="ekyc_birth_date_hint">Pilih Tanggal Lahir</string>
+    <string name="ekyc_birth_date_label">Tanggal Lahir</string>
+    <string name="ekyc_btn_confirm">Konfirmasi</string>
+    <string name="ekyc_btn_continue">Lanjutkan</string>
+    <string name="ekyc_btn_finish">Selesai</string>
+    <string name="ekyc_btn_review">Periksa Kembali</string>
+    <string name="ekyc_btn_send_otp">Kirim OTP</string>
+    <string name="ekyc_btn_start_liveness">Mulai Deteksi Wajah</string>
+    <string name="ekyc_btn_verify_otp">Verifikasi OTP</string>
+    <string name="ekyc_camera_permission_required">Izin kamera dibutuhkan untuk verifikasi wajah</string>
+    <string name="ekyc_dialog_confirm_msg">Pastikan NIK, nama lengkap, dan tanggal lahir sudah sesuai dengan e-KTP fisik Anda.</string>
+    <string name="ekyc_dialog_confirm_title">Konfirmasi Data Identitas</string>
+    <string name="ekyc_liveness_prep_title">Persiapan Active Liveness</string>
+    <string name="ekyc_liveness_tip_1">Pastikan pencahayaan cukup dan hindari backlight</string>
+    <string name="ekyc_liveness_tip_2">Lepas kacamata hitam, topi, atau masker</string>
+    <string name="ekyc_liveness_tip_3">Posisikan wajah berada di dalam bingkai oval</string>
+    <string name="ekyc_liveness_tip_4">Ikuti instruksi gerakan yang muncul pada layar</string>
+    <string name="ekyc_name_hint">Sesuai KTP</string>
+    <string name="ekyc_name_label">Nama Lengkap</string>
+    <string name="ekyc_nik_hint">16 digit nomor KTP</string>
+    <string name="ekyc_nik_label">Nomor Induk Kependudukan (NIK)</string>
+    <string name="ekyc_otp_hint">Masukkan 6 digit kode OTP</string>
+    <string name="ekyc_otp_label">Kode OTP</string>
+    <string name="ekyc_phone_hint">08xxxxxxxxxx</string>
+    <string name="ekyc_phone_label">Nomor Handphone</string>
+    <string name="ekyc_resend_otp_wait">Kirim ulang dalam %1$s detik</string>
+    <string name="ekyc_step_demografi">Data Demografi</string>
+    <string name="ekyc_step_liveness">Pengecekan Wajah</string>
+    <string name="ekyc_step_otp">Verifikasi Nomor HP</string>
+    <string name="ekyc_success_desc">Data eKYC Anda telah berhasil diverifikasi dan sedang diproses oleh Registration Authority (RA).</string>
+    <string name="ekyc_success_title">Verifikasi Selesai</string>
+    <string name="ekyc_title">Verifikasi Identitas</string>
+</resources>

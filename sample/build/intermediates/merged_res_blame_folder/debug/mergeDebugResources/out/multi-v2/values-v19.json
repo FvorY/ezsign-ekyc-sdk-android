@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.github.fvory.ekyc.sample-mergeDebugResources-37:/values-v19/values-v19.xml",
+            "map": [
+                {
+                    "source": "/Users/developersign/.gradle/caches/9.8.1/transforms/1e3f243f0d61f0ee97efcf8b67e277b9/transformed/faceidv5/res/values-v19/values-v19.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "289"
+                    }
+                }
+            ]
+        }
+    ]
+}

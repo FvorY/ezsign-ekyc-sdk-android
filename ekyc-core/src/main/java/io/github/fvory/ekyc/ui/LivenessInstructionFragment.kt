@@ -119,6 +119,10 @@ internal class LivenessInstructionFragment : Fragment() {
                 }
             }
 
+            override fun onLivenessFileCallback(livenessFilePath: String?) {
+                // Optional liveness video file callback
+            }
+
             override fun onLivenessLocalFileCallBack(info: MegliveLocalFileInfo?) {
                 // Optional local video file callback
             }
