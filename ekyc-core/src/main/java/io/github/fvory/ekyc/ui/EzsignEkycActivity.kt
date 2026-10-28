@@ -6,11 +6,14 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withResumed
 import io.github.fvory.ekyc.EzsignEkyc
 import io.github.fvory.ekyc.R
 import io.github.fvory.ekyc.databinding.ActivityEzsignEkycBinding
 import io.github.fvory.ekyc.model.EkycConfig
 import io.github.fvory.ekyc.model.EkycResult
+import kotlinx.coroutines.launch
 
 internal class EzsignEkycActivity : AppCompatActivity() {
 
@@ -59,8 +62,14 @@ internal class EzsignEkycActivity : AppCompatActivity() {
     }
 
     fun navigateToResult() {
-        supportFragmentManager.commit {
-            replace(R.id.fragmentContainer, EkycResultFragment())
+        // Megvii reports success while its own activity is still on top, so this
+        // activity is stopped; wait until it is resumed before committing.
+        lifecycleScope.launch {
+            withResumed {
+                supportFragmentManager.commit {
+                    replace(R.id.fragmentContainer, EkycResultFragment())
+                }
+            }
         }
     }
 
