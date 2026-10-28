@@ -11,7 +11,7 @@ android {
         // Megvii liveness only works for package names registered on the ezSign license.
         // Override with: ./gradlew :sample:assembleDebug -PekycApplicationId=<registered.package>
         applicationId = providers.gradleProperty("ekycApplicationId")
-            .getOrElse("io.github.fvory.ekyc.sample")
+            .getOrElse("com.sign.livenessdemo")
         minSdk = 24
         targetSdk = 34
         versionCode = 1

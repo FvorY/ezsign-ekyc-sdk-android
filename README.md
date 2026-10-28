@@ -30,7 +30,7 @@ APK dan IPA demo tersedia di halaman [Releases](https://github.com/FvorY/ezsign-
 2. Login ke akun ezSign pada environment yang akan diuji, lalu salin token sesi dari `data.token` di respons login.
 3. Buka aplikasi demo, pilih environment (DEV / STG / PROD) atau isi Base URL, tempel token, lalu ketuk **Mulai Verifikasi eKYC**.
 
-> Langkah liveness pada APK demo baru bisa berjalan setelah package name demo terdaftar di lisensi Megvii. Lihat [Prasyarat lisensi liveness](#prasyarat-lisensi-liveness-wajib).
+> APK demo memakai package `com.sign.livenessdemo`, yang sudah terdaftar di lisensi Megvii ezSign, dan bisa terpasang berdampingan dengan aplikasi ezSign resmi. Lihat [Prasyarat lisensi liveness](#prasyarat-lisensi-liveness-wajib).
 
 ## Fitur
 
@@ -71,7 +71,7 @@ Langkah demografi dan OTP tidak bergantung pada lisensi ini. Karena itu, masalah
 
 ## Instalasi
 
-Library Megvii ikut di repo ini sebagai file lokal `ekyc-core/libs/faceidv5.aar`. Gradle tidak menyertakan file AAR lokal ke artefak library yang dipublikasikan, jadi aplikasi host perlu mendapatkan AAR tersebut lewat salah satu cara berikut.
+Library Megvii ikut di repo ini sebagai file lokal `ekyc-core/libs/faceidv5.aar`. AAR ini sudah dikonversi ke AndroidX, sehingga aplikasi host tidak perlu mengaktifkan Jetifier. Gradle tidak menyertakan file AAR lokal ke artefak library yang dipublikasikan, jadi aplikasi host perlu mendapatkan AAR tersebut lewat salah satu cara berikut.
 
 ### Opsi A: modul source (disarankan)
 
@@ -299,13 +299,11 @@ Modul `sample` adalah aplikasi simulasi fintech yang memanggil SDK.
 ./gradlew :sample:assembleDebug
 ```
 
-Lisensi Megvii terikat pada package name. Agar langkah liveness bisa diuji, build dengan `applicationId` yang sudah terdaftar:
+Sample memakai `applicationId` `com.sign.livenessdemo`, yang sudah terdaftar di lisensi Megvii ezSign. Lisensi Megvii terikat pada package name, jadi untuk menguji dengan package lain, gunakan parameter `ekycApplicationId`:
 
 ```bash
-./gradlew :sample:assembleDebug -PekycApplicationId=com.sign.ezsign
+./gradlew :sample:assembleDebug -PekycApplicationId=<package terdaftar>
 ```
-
-Tanpa parameter tersebut, sample memakai `io.github.fvory.ekyc.sample`. APK yang dibuild dengan `com.sign.ezsign` tidak bisa dipasang berdampingan dengan aplikasi ezSign resmi karena sertifikat penandatangannya berbeda. Hapus dulu aplikasi ezSign resmi dari perangkat uji.
 
 Unit test SDK:
 
@@ -319,11 +317,14 @@ Unit test SDK:
 SDK menampilkan dialog seperti ini:
 
 ```
-Lisensi liveness menolak aplikasi io.github.fvory.ekyc.sample. Package name ini harus
+Lisensi liveness menolak aplikasi com.example.myapp. Package name ini harus
 didaftarkan pada akun Megvii ezSign. (AUTHENTICATION_FAIL{illegal_param})
 ```
 
 Package name yang tertulis di dialog belum terdaftar di lisensi Megvii ezSign. Kode di dalam kurung bisa berupa `AUTHENTICATION_FAIL{illegal_param}` atau `bundleid_error`. Daftarkan package name tersebut, atau build sample dengan `-PekycApplicationId=<package terdaftar>`.
+
+**Dialog "Liveness tidak dapat dimulai" berisi `FACE_INIT_FAIL`**
+Kamera deteksi Megvii gagal dibuka. Penyebab yang paling umum adalah `faceidv5.aar` versi asli dari Megvii yang masih memakai Android Support Library: logcat menampilkan `NoClassDefFoundError: Failed resolution of: Landroid/support/v4/app/ActivityCompat;`. Pakai `faceidv5.aar` dari repo ini, yang sudah dikonversi ke AndroidX, atau aktifkan `android.enableJetifier=true` bila Anda harus memakai AAR asli. Pastikan juga kamera tidak sedang dipakai aplikasi lain.
 
 **`Unauthorized` / `JWT validation failed`**
 Token sudah kedaluwarsa atau diterbitkan oleh environment lain. Login ulang di host yang sama dengan `baseUrl`, lalu pakai `data.token` dari respons login. Jangan memakai token dari respons OTP sebagai `authToken`.
