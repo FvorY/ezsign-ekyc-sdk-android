@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
     private val ekycLauncher = registerForActivityResult(EzsignEkyc.Contract()) { result ->
         when (result) {
             is EkycResult.Success -> {
-                // result.regisStatus bernilai "wait_ra": data menunggu persetujuan RA
+                // result.regisStatus: "wait_ra" = menunggu RA; "in_kyc"/"reject_ra"/"reject_ra_rekey_exp" = ulangi eKYC
                 showMessage(result.message)
             }
             is EkycResult.Failed -> {
@@ -211,9 +211,19 @@ Token harus diterbitkan oleh host yang sama dengan `baseUrl`. Token DEV tidak be
 
 | Tipe | Properti | Kapan |
 |---|---|---|
-| `Success` | `message: String`, `regisStatus: String` | Semua langkah berhasil dan pengguna menekan **Selesai**. Saat ini `regisStatus` bernilai `wait_ra`. |
+| `Success` | `message: String`, `regisStatus: String` | Semua langkah berhasil dan pengguna menekan **Selesai**. Lihat tabel `regisStatus` di bawah. |
 | `Failed` | `errorCode: String`, `message: String` | Alur berhenti karena error. Lihat [kode error](#penanganan-hasil-dan-kode-error). |
 | `Cancelled` | — | Pengguna menutup alur atau menekan back sebelum finalisasi. |
+
+Nilai `regisStatus` diambil dari respons `auth/user/refresh` setelah finalisasi, sama seperti aplikasi ezSign. Jika refresh gagal, nilainya `wait_ra`.
+
+| `regisStatus` | Arti | Tindakan aplikasi host |
+|---|---|---|
+| `wait_ra` | Data menunggu persetujuan Registration Authority (RA). | Arahkan pengguna ke dashboard. |
+| `in_kyc`, `reject_ra` | Server meminta data identitas diverifikasi ulang (rekey). | Jalankan alur eKYC lagi. |
+| `reject_ra_rekey_exp` | Verifikasi ulang diperlukan karena masa berlaku data sudah habis. | Jalankan alur eKYC lagi. |
+| lainnya | Status registrasi lain dari server. | Tangani sesuai aturan bisnis ezSign. |
+
 
 ## Alur verifikasi
 
@@ -230,7 +240,7 @@ Aplikasi host
 1. **Data Identitas**: saat layar dibuka, SDK memeriksa `ekyc-status`. Jika `canEkyc` bernilai `false`, alur berakhir dengan `Failed("EKYC_NOT_ALLOWED")`. Pengguna lalu mengisi NIK (16 digit), nama sesuai KTP, dan tanggal lahir.
 2. **Verifikasi OTP**: pengguna memasukkan nomor handphone, menerima OTP lewat SMS, lalu memasukkan kodenya. Token dari respons `verifyotp` disimpan untuk dipakai saat finalisasi.
 3. **Active Liveness Check**: menampilkan instruksi persiapan. Setelah izin kamera diberikan, SDK meminta `biz_token` dan `liveness_id` ke server ezSign, lalu membuka deteksi Megvii.
-4. **Hasil**: SDK mengirim hasil liveness, memperbarui biodata akun beserta nomor handphone, lalu me-refresh sesi. Status akhir `wait_ra` berarti data menunggu persetujuan Registration Authority (RA).
+4. **Hasil**: SDK mengirim hasil liveness, memperbarui biodata akun beserta nomor handphone, lalu me-refresh sesi. `regisStatus` dari respons refresh dikembalikan ke aplikasi host.
 
 ## Endpoint server
 
@@ -326,6 +336,9 @@ Package name yang tertulis di dialog belum terdaftar di lisensi Megvii ezSign. K
 **Dialog "Liveness tidak dapat dimulai" berisi `FACE_INIT_FAIL`**
 Kamera deteksi Megvii gagal dibuka. Penyebab yang paling umum adalah `faceidv5.aar` versi asli dari Megvii yang masih memakai Android Support Library: logcat menampilkan `NoClassDefFoundError: Failed resolution of: Landroid/support/v4/app/ActivityCompat;`. Pakai `faceidv5.aar` dari repo ini, yang sudah dikonversi ke AndroidX, atau aktifkan `android.enableJetifier=true` bila Anda harus memakai AAR asli. Pastikan juga kamera tidak sedang dipakai aplikasi lain.
 
+**Layar deteksi Megvii langsung tertutup dan muncul `LIVENESS_FAILURE`**
+Resource layar deteksi Megvii tidak ikut terpasang; logcat menampilkan `Invalid resource ID 0x00000000` tepat sebelum layar tertutup. Resource ini (`liveness_*.png`, `liveness_*.m4a`, `livenessv5_sdk_*.xml`) tidak termasuk dalam `faceidv5.aar` dan sudah disertakan di `ekyc-core/src/main/res`. Jika Anda memasang SDK lewat Opsi B, salin juga folder resource tersebut ke modul aplikasi.
+
 **`Unauthorized` / `JWT validation failed`**
 Token sudah kedaluwarsa atau diterbitkan oleh environment lain. Login ulang di host yang sama dengan `baseUrl`, lalu pakai `data.token` dari respons login. Jangan memakai token dari respons OTP sebagai `authToken`.
 
@@ -349,6 +362,7 @@ ekyc-core/                     Library SDK
     api/                       Retrofit service, repository, model API
     ui/                        Activity, fragment per langkah, ViewModel
   src/main/res/raw/faceidmodel.bin   Model deteksi wajah Megvii
+  src/main/res/**/liveness_*, livenessv5_sdk_*   Gambar, audio panduan, teks, dan warna layar deteksi Megvii
 sample/                        Aplikasi simulasi
 ```
 

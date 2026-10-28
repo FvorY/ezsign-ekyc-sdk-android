@@ -16,6 +16,7 @@ internal class EkycResultFragment : Fragment() {
     private var _binding: FragmentEkycResultBinding? = null
     private val binding get() = _binding!!
     private val viewModel: EkycViewModel by activityViewModels()
+    private var regisStatus = DEFAULT_REGIS_STATUS
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +31,7 @@ internal class EkycResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnFinish.setOnClickListener {
-            (activity as? EzsignEkycActivity)?.finishSuccess("Verifikasi eKYC selesai, menunggu approval RA")
+            (activity as? EzsignEkycActivity)?.finishSuccess("Verifikasi eKYC selesai", regisStatus)
         }
 
         finalizeEkyc()
@@ -86,14 +87,26 @@ internal class EkycResultFragment : Fragment() {
                 return@launch
             }
 
-            viewModel.repository.refreshAuth()
+            // Same as the Flutter app: the refreshed session tells whether RA review starts
+            // or the identity has to be submitted again.
+            regisStatus = viewModel.repository.refreshAuth().getOrNull()?.data?.regisStatus
+                ?.takeIf { it.isNotBlank() } ?: DEFAULT_REGIS_STATUS
 
             binding.resultProgress.visibility = View.GONE
             binding.tvResultTitle.text = "Verifikasi Selesai"
-            binding.tvResultDesc.text = "Data eKYC Anda telah berhasil diverifikasi dan sedang diproses oleh Registration Authority (RA)."
+            binding.tvResultDesc.text = if (regisStatus in REKEY_STATUSES) {
+                "Data eKYC telah dikirim, tetapi server meminta data identitas diverifikasi ulang."
+            } else {
+                "Data eKYC Anda telah berhasil diverifikasi dan sedang diproses oleh Registration Authority (RA)."
+            }
             binding.btnFinish.isEnabled = true
             binding.btnFinish.text = "Selesai"
         }
+    }
+
+    private companion object {
+        const val DEFAULT_REGIS_STATUS = "wait_ra"
+        val REKEY_STATUSES = setOf("in_kyc", "reject_ra", "reject_ra_rekey_exp")
     }
 
     override fun onDestroyView() {
