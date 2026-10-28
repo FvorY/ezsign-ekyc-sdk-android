@@ -1,0 +1,71 @@
+<resources>
+
+    <string name="livenessV5ExitTitlePromptText">Do you confirm to exit verification</string>
+    <string name="livenessV5HomePromptWaitText">Stay on your position</string>
+    <string name="livenessV5HomePromptBlinkText">Blink eyes</string>
+    <string name="livenessV5HomePromptOpenMouthText">Open mouth</string>
+    <string name="livenessV5HomePromptShakeHeadText">Turn head</string>
+    <string name="livenessV5HomePromptNodText">Nod head</string>
+    <string name="livenessV5HomePromptFrontalFaceText">Position Your Face in the Frame</string>
+    <string name="livenessHomePromptFrontalEyeText">Position Your Eyes in the Frame</string>
+    <string name="livenessV5HomePromptFaceEreaText">Invalid face area for detection</string>
+    <string name="livenessV5HomePromptBrighterText">Insufficient Lighting</string>
+    <string name="livenessV5HomePromptDarkerText">Lighting Too Bright</string>
+    <string name="livenessV5HomePromptEnvBrighterText">Lighting Too Bright</string>
+    <string name="livenessV5HomePromptEnvDarkerText">Insufficient Lighting</string>
+    <string name="livenessV5HomePromptCloserText">Move Forward a Little</string>
+    <string name="livenessV5HomePromptFurtherText">Move Back a Little</string>
+    <string name="livenessV5HomePromptNoBacklightingText">Please keep the recording clear</string>
+    <string name="livenessV5HomePromptFrontalFaceInBoundingBoxText">Position Your Face in the Frame</string>
+    <string name="livenessV5HomePromptNoEyesOcclusionText">Please avoid eyes occlusion</string>
+    <string name="livenessV5HomePromptNoMouthOcclusionText">Please avoid mouth occlusion</string>
+    <string name="livenessV5HomePromptStayStillText">Hold Still for a Moment</string>
+    <string name="livenessV5HomePromptTooBrightText">Lighting Too Bright</string>
+    <string name="livenessV5ExitTitlePromptRightPoseText">Please face the screen directly</string>
+    <string name="livenessV5ExitTitlePromptText0">Prompt</string>
+    <string name="livenessV5HomePromptVerticalText">Keep Your Phone Upright</string>
+    <string name="livenessV5HomePromptMultiplayerText">Ensure single-person recording</string>
+    <string name="livenessHomeScrnAuthorizedRejectText">To process this service, you need to grant screen recording permission. Please try again and allow authorization or contact the customer service of the platform for assistance.</string>
+    <string name="livenessHomeScrnAuthorizedRejectButtonText">Confirmed</string>
+
+    <string name="livenessV5HomeDynamicBlinkText">Please blink your eyes</string>
+    <string name="livenessV5HomeDynamicOpenMouthText">Please open your mouth</string>
+    <string name="livenessV5HomeDynamicShakeHeadText">Please shake your head</string>
+    <string name="livenessV5HomeDynamicNodText">Please nod your head</string>
+
+    <string name="livenessV5HomeExitPopupwindowSureText">Confirmed</string>
+    <string name="livenessV5HomeExitPopupwindowCancelText">Cancelled</string>
+
+    <string name="livenessV5HomeDynamicActionPromptText"></string>
+    <string name="livenessV5HomeDynamicFlashPromptText"></string>
+    <string name="livenessV5HomePromptText"></string>
+
+    <string name="livenessV5HomeCameraParameterText">Face security detection</string>
+e
+    <string name="livenessV5HomeCloserPromptText">Slowly move phone close to face</string>
+    <string name="livenessV5HomeCloserPromptImageText">Move phone close to face</string>
+    <string name="livenessHomeDynamicActionTimeOutText">Time out，try again</string>
+    <string name="livenessHomeDynamicActionWrongText">Action Wrong，try again</string>
+
+
+    <string name="livenessV5HomePromptCorrectActionText">The action is wrong</string>
+    <string name="livenessV5HomePromptCoherenceText">Action is Incoherent</string>
+    <string name="livenessV5HomePromptFaceLocationText">Keep the face in the frame</string>
+    <string name="livenessV5HomePromptActionSpeedText">Action is too fast</string>
+    <string name="livenessV5HomePromptMaskText">Take off the mask</string>
+    <string name="livenessV5HomePromptFaceLostText">Keep the face in the frame</string>
+    <string name="livenessV5HomePromptNoFaceText">Keep the face in the frame</string>
+    <string name="livenessV5HomePromptOcclusionText">Avoid face occlusion</string>
+
+    <string name="livenessV5HomeLoadingpageText">Data loading，hold on...</string>
+    <!--    协议页面顶部标题文案-->
+    <string name="livenessV5HomeAgreementpageTopTitleText">Live verification</string>
+    <!--    协议页面底部提示文案-->
+    <string name="livenessV5HomeAgreementpageBottomTitleText">Face the screen and do not obstruct your face</string>
+    <!--    底部按钮文案-->
+    <string name="livenessV5HomeAgreementpageBottomButtonText">START</string>
+    <!--    协议文案-->
+    <string name="livenessV5HomeAgreementText">《User Agreement》</string>
+    <string name="livenessV5HomeCreditText">《Personal Credit Information Notice》</string>
+
+</resources>

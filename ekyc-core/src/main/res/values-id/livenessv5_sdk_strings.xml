@@ -1,0 +1,66 @@
+<resources>
+
+    <string name="livenessV5ExitTitlePromptText">Apakah Anda yakin ingin keluar dari verifikasi</string>
+    <string name="livenessV5HomePromptWaitText">Tetap pada posisi Anda</string>
+    <string name="livenessV5HomePromptBlinkText">Kedipkan mata</string>
+    <string name="livenessV5HomePromptOpenMouthText">Buka mulut</string>
+    <string name="livenessV5HomePromptShakeHeadText">Putar kepala</string>
+    <string name="livenessV5HomePromptNodText">Nodkan kepala</string>
+    <string name="livenessV5HomePromptFrontalFaceText">Posisikan wajah Anda dalam bingkai</string>
+    <string name="livenessHomePromptFrontalEyeText">Posisikan mata Anda dalam bingkai</string>
+    <string name="livenessV5HomePromptFaceEreaText">Area wajah tidak valid untuk deteksi</string>
+    <string name="livenessV5HomePromptBrighterText">Pencahayaan tidak cukup</string>
+    <string name="livenessV5HomePromptDarkerText">Pencahayaan terlalu terang</string>
+    <string name="livenessV5HomePromptEnvBrighterText">Pencahayaan terlalu terang</string>
+    <string name="livenessV5HomePromptEnvDarkerText">Pencahayaan tidak cukup</string>
+    <string name="livenessV5HomePromptCloserText">Dekatkan sedikit</string>
+    <string name="livenessV5HomePromptFurtherText">Jauhkan sedikit</string>
+    <string name="livenessV5HomePromptNoBacklightingText">Harap jaga rekaman tetap jelas</string>
+    <string name="livenessV5HomePromptFrontalFaceInBoundingBoxText">Posisikan wajah Anda dalam bingkai</string>
+    <string name="livenessV5HomePromptNoEyesOcclusionText">Harap hindari penghalangan pada mata</string>
+    <string name="livenessV5HomePromptNoMouthOcclusionText">Harap hindari penghalangan pada mulut</string>
+    <string name="livenessV5HomePromptStayStillText">Tetap diam untuk sesaat</string>
+    <string name="livenessV5HomePromptTooBrightText">Pencahayaan terlalu terang</string>
+    <string name="livenessV5ExitTitlePromptRightPoseText">Harap hadap layar secara langsung</string>
+    <string name="livenessV5ExitTitlePromptText0">Prompt</string>
+    <string name="livenessV5HomePromptVerticalText">Jaga ponsel Anda tegak</string>
+    <string name="livenessV5HomePromptMultiplayerText">Pastikan hanya satu orang yang merekam</string>
+    <string name="livenessHomeScrnAuthorizedRejectText">Untuk memproses layanan ini, Anda perlu memberikan izin perekaman layar. Silakan coba lagi dan izinkan otorisasi atau hubungi layanan pelanggan platform untuk bantuan.</string>
+    <string name="livenessHomeScrnAuthorizedRejectButtonText">Dikonfirmasi</string>
+
+    <string name="livenessV5HomeDynamicBlinkText">Silakan kedipkan mata Anda</string>
+    <string name="livenessV5HomeDynamicOpenMouthText">Silakan buka mulut Anda</string>
+    <string name="livenessV5HomeDynamicShakeHeadText">Silakan goyangkan kepala Anda</string>
+    <string name="livenessV5HomeDynamicNodText">Silakan anggukkan kepala Anda</string>
+
+    <string name="livenessV5HomeExitPopupwindowSureText">Dikonfirmasi</string>
+    <string name="livenessV5HomeExitPopupwindowCancelText">Dibatalkan</string>
+
+    <string name="livenessV5HomeDynamicActionPromptText"></string>
+    <string name="livenessV5HomeDynamicFlashPromptText"></string>
+    <string name="livenessV5HomePromptText"></string>
+
+    <string name="livenessV5HomeCameraParameterText">Deteksi keamanan wajah</string>
+
+    <string name="livenessV5HomeCloserPromptText">Pelan-pelan dekatkan ponsel ke wajah</string>
+    <string name="livenessV5HomeCloserPromptImageText">Dekatkan ponsel ke wajah</string>
+    <string name="livenessHomeDynamicActionTimeOutText">Waktu habis, coba lagi</string>
+    <string name="livenessHomeDynamicActionWrongText">Aksi salah, coba lagi</string>
+
+    <string name="livenessV5HomePromptCorrectActionText">Aksi salah</string>
+    <string name="livenessV5HomePromptCoherenceText">Aksi tidak koheren</string>
+    <string name="livenessV5HomePromptFaceLocationText">Jaga wajah dalam bingkai</string>
+    <string name="livenessV5HomePromptActionSpeedText">Aksi terlalu cepat</string>
+    <string name="livenessV5HomePromptMaskText">Lepaskan masker</string>
+    <string name="livenessV5HomePromptFaceLostText">Jaga wajah dalam bingkai</string>
+    <string name="livenessV5HomePromptNoFaceText">Jaga wajah dalam bingkai</string>
+    <string name="livenessV5HomePromptOcclusionText">Hindari penghalangan wajah</string>
+
+    <string name="livenessV5HomeLoadingpageText">Memuat data, harap tunggu...</string>
+    <string name="livenessV5HomeAgreementpageTopTitleText">Verifikasi langsung</string>
+    <string name="livenessV5HomeAgreementpageBottomTitleText">Hadap layar dan jangan menghalangi wajah Anda</string>
+    <string name="livenessV5HomeAgreementpageBottomButtonText">MULAI</string>
+    <string name="livenessV5HomeAgreementText">《Perjanjian Pengguna》</string>
+    <string name="livenessV5HomeCreditText">《Pemberitahuan Informasi Kredit Pribadi》</string>
+
+</resources>

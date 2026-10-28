@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    活体录制进度条颜色（动作+不打光) -->
+    <color name="livenessV5HomeProcessBarColor">#267CE0</color>
+    <!--    活体录制完成人脸框颜色-->
+    <color name="livenessV5HomeFinishContourLineColor">#267CE0</color>
+    <!--    炫彩不打光活体录制提示文字颜色-->
+    <color name="livenessV5HomeNormalRemindTextColor">#292929</color>
+    <!--    非首次照镜子提示文字颜色-->
+    <color name="livenessV5HomeFailedRemindTextColor">#FF3B42</color>
+
+    <!--    动作活体录制中小帽子颜色-->
+    <color name="livenessV5HomeActionHatColor">#0F3159</color>
+    <!--    短模式垂直检测提示文字颜色-->
+    <color name="livenessV5HomeDeviceVerticalRemindColor">#FFFFFF</color>
+    <!--    长模式垂直检测提示文字颜色-->
+    <color name="livenessV5HomeDeviceVerticalLongModeRemindColor">#292929</color>
+
+
+    <!--    背景颜色1-->
+    <color name="livenessV5HomeBackgroundColor1">#06D0FC</color>
+    <!--    背景颜色2-->
+    <color name="livenessV5HomeBackgroundColor2">#0678FC</color>
+
+    <color name="livenessV5ExitLeftPromptColor">#777777</color>
+    <color name="livenessV5ExitRightPromptColor">#007AFF</color>
+
+    <!--    点击后按钮颜色、协议颜色、返回颜色-->
+    <color name="livenessV5HomeAgreementpageBottomButtonAfterClickColor">#267CE0</color>
+    <!--    点击前按钮颜色、协议颜色、返回颜色-->
+    <color name="livenessV5HomeAgreementpageBottomButtonBeforeClickColor">#3B94FC</color>
+
+    <!--    自定义提示背景颜色-->
+    <color name="livenessV5HomeCustomPromptBackgroundColor">#FDEBEB</color>
+    <!--    自定义提示字体颜色-->
+    <color name="livenessV5HomeCustomPromptTextColor">#DA3130</color>
+    <!--    语音播报喇叭图标颜色-->
+    <color name="livenessCustomPromptColor">#FF0000</color>
+
+    <color name="livenessHomeActionLineDoingColor">#D8D8D8</color>
+    <color name="livenessHomeActionLineDoneColor">#267CE0</color>
+</resources>
