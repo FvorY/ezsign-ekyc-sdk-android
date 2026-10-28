@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -102,7 +103,12 @@ internal class LivenessInstructionFragment : Fragment() {
             override fun onPreDetectFinish(errorCode: Int, errorMessage: String?) {
                 if (errorCode != 1000) {
                     activity.runOnUiThread {
-                        Toast.makeText(context, describeStartError(errorCode, errorMessage), Toast.LENGTH_LONG).show()
+                        if (!isAdded) return@runOnUiThread
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Liveness tidak dapat dimulai")
+                            .setMessage(describeStartError(errorCode, errorMessage))
+                            .setPositiveButton("OK", null)
+                            .show()
                     }
                 }
             }
