@@ -315,8 +315,15 @@ Unit test SDK:
 
 ## Troubleshooting
 
-**`AUTHENTICATION_FAIL{illegal_param}` atau `bundleid_error` saat menekan Start Liveness**
-Package name aplikasi belum terdaftar di lisensi Megvii ezSign. Pesan dari SDK menyebutkan package name yang ditolak. Daftarkan package name tersebut, atau build sample dengan `-PekycApplicationId=<package terdaftar>`.
+**Dialog "Liveness tidak dapat dimulai" saat menekan Start Liveness**
+SDK menampilkan dialog seperti ini:
+
+```
+Lisensi liveness menolak aplikasi io.github.fvory.ekyc.sample. Package name ini harus
+didaftarkan pada akun Megvii ezSign. (AUTHENTICATION_FAIL{illegal_param})
+```
+
+Package name yang tertulis di dialog belum terdaftar di lisensi Megvii ezSign. Kode di dalam kurung bisa berupa `AUTHENTICATION_FAIL{illegal_param}` atau `bundleid_error`. Daftarkan package name tersebut, atau build sample dengan `-PekycApplicationId=<package terdaftar>`.
 
 **`Unauthorized` / `JWT validation failed`**
 Token sudah kedaluwarsa atau diterbitkan oleh environment lain. Login ulang di host yang sama dengan `baseUrl`, lalu pakai `data.token` dari respons login. Jangan memakai token dari respons OTP sebagai `authToken`.
