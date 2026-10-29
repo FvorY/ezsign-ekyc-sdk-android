@@ -23,7 +23,7 @@ internal class DemografiFragment : Fragment() {
     private val viewModel: EkycViewModel by activityViewModels()
 
     private val calendar = Calendar.getInstance()
-    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.US)
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import io.github.fvory.ekyc.databinding.FragmentEkycResultBinding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 internal class EkycResultFragment : Fragment() {
@@ -41,6 +42,9 @@ internal class EkycResultFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             binding.resultProgress.visibility = View.VISIBLE
             binding.btnFinish.isEnabled = false
+
+            // Same as the Flutter app: give the liveness upload a moment before verifying it.
+            delay(LIVENESS_SUBMIT_DELAY_MS)
 
             val submitLivenessRes = viewModel.repository.submitLiveness(
                 viewModel.bizToken,
@@ -106,6 +110,7 @@ internal class EkycResultFragment : Fragment() {
 
     private companion object {
         const val DEFAULT_REGIS_STATUS = "wait_ra"
+        const val LIVENESS_SUBMIT_DELAY_MS = 2_000L
         val REKEY_STATUSES = setOf("in_kyc", "reject_ra", "reject_ra_rekey_exp")
     }
 
