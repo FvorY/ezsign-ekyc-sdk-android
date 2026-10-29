@@ -90,9 +90,7 @@ Langkah demografi dan OTP tidak bergantung pada lisensi ini. Karena itu, masalah
 
 ## Instalasi
 
-Liveness engine ikut di repo ini sebagai file `faceidv5/faceidv5.aar`, dibungkus dalam modul Gradle `:faceidv5`. `ekyc-core` bergantung pada modul tersebut, bukan langsung pada file AAR, karena library Android tidak boleh bergantung langsung pada file `.aar` lokal (build release akan gagal). Gradle juga tidak menyertakan AAR pihak ketiga ke artefak library yang dipublikasikan, jadi aplikasi host perlu mendapatkan AAR tersebut lewat salah satu cara berikut.
-
-### Opsi A: modul source (disarankan)
+Liveness engine ikut di repo ini sebagai file `faceidv5/faceidv5.aar`, dibungkus dalam modul Gradle `:faceidv5`. `ekyc-core` bergantung pada modul tersebut, bukan langsung pada file AAR, karena library Android tidak boleh bergantung langsung pada file `.aar` lokal (build release akan gagal). SDK dipasang sebagai modul source, sehingga liveness engine ikut terpasang tanpa langkah manual.
 
 1. Salin folder `ekyc-core` **dan** `faceidv5` ke root proyek Anda, atau tambahkan repo ini sebagai git submodule.
 2. Daftarkan kedua modul di `settings.gradle.kts`:
@@ -115,32 +113,7 @@ Liveness engine ikut di repo ini sebagai file `faceidv5/faceidv5.aar`, dibungkus
 
 4. Pastikan version catalog proyek Anda punya alias yang dipakai `ekyc-core/build.gradle.kts` (lihat [`gradle/libs.versions.toml`](gradle/libs.versions.toml)). Cara lainnya, ganti alias tersebut dengan koordinat dependensi langsung.
 
-Dengan opsi ini, AAR liveness engine, model, resource layar deteksi, dan aturan R8 ikut terpasang otomatis, baik untuk build debug maupun release (termasuk dengan minify dan shrink resource).
-
-### Opsi B: JitPack
-
-1. Tambahkan repositori JitPack di `settings.gradle.kts`:
-
-   ```kotlin
-   dependencyResolutionManagement {
-       repositories {
-           google()
-           mavenCentral()
-           maven { url = uri("https://jitpack.io") }
-       }
-   }
-   ```
-
-2. Salin `faceidv5/faceidv5.aar` ke `app/libs/`, lalu tambahkan SDK dan liveness engine di `app/build.gradle.kts`:
-
-   ```kotlin
-   dependencies {
-       implementation("com.github.FvorY:ezsign-ekyc-sdk-android:<tag>")
-       implementation(files("libs/faceidv5.aar"))
-   }
-   ```
-
-   Ganti `<tag>` dengan tag rilis yang tersedia di repo ini.
+Dengan cara ini, AAR liveness engine, model, resource layar deteksi, dan aturan R8 ikut terpasang otomatis, baik untuk build debug maupun release (termasuk dengan minify dan shrink resource).
 
 ## Mulai cepat
 
@@ -354,7 +327,7 @@ Izin kamera diminta saat runtime ketika pengguna menekan **Start Liveness**, seb
 
 SDK tidak memakai fitur perekaman layar liveness, sehingga service perekaman layar dan izin `FOREGROUND_SERVICE_MEDIA_PROJECTION` tidak diperlukan.
 
-Aturan ProGuard/R8 untuk SDK dan liveness engine ikut terpasang otomatis lewat `ekyc-core/consumer-rules.pro`. Jika liveness engine ditambahkan manual (Opsi B), salin seluruh isi `consumer-rules.pro` ke konfigurasi R8 aplikasi.
+Aturan ProGuard/R8 untuk SDK dan liveness engine ikut terpasang otomatis lewat `ekyc-core/consumer-rules.pro`.
 
 ## Data dan privasi
 
@@ -413,7 +386,7 @@ Package name yang tertulis di dialog belum terdaftar di lisensi liveness ezSign.
 Kamera deteksi gagal dibuka. Penyebab yang paling umum adalah `faceidv5.aar` versi asli dari vendor yang masih memakai Android Support Library: logcat menampilkan `NoClassDefFoundError: Failed resolution of: Landroid/support/v4/app/ActivityCompat;`. Pakai `faceidv5.aar` dari repo ini, yang sudah dikonversi ke AndroidX, atau aktifkan `android.enableJetifier=true` bila Anda harus memakai AAR asli. Pastikan juga kamera tidak sedang dipakai aplikasi lain.
 
 **Layar deteksi langsung tertutup dengan kode `(1016)` (`LIVENESS_FAILURE`)**
-Jika layar deteksi tertutup kurang dari sedetik setelah terbuka, resource layar deteksi tidak ikut terpasang; logcat menampilkan `Invalid resource ID 0x00000000`. Resource ini (`liveness_*.png`, `liveness_*.m4a`, `livenessv5_sdk_*.xml`) tidak termasuk dalam `faceidv5.aar` dan sudah disertakan di `ekyc-core/src/main/res`. Jika Anda memasang SDK lewat Opsi B, salin juga resource tersebut ke modul aplikasi. Jika layar sempat berjalan, kode ini berarti pengguna tidak lolos deteksi; minta pengguna mengikuti instruksi di layar persiapan lalu mencoba lagi.
+Jika layar deteksi tertutup kurang dari sedetik setelah terbuka, resource layar deteksi tidak ikut terpasang; logcat menampilkan `Invalid resource ID 0x00000000`. Resource ini (`liveness_*.png`, `liveness_*.m4a`, `livenessv5_sdk_*.xml`) tidak termasuk dalam `faceidv5.aar` dan sudah disertakan di `ekyc-core/src/main/res`. Pastikan modul `ekyc-core` dipasang utuh tanpa menghapus folder `res`. Jika layar sempat berjalan, kode ini berarti pengguna tidak lolos deteksi; minta pengguna mengikuti instruksi di layar persiapan lalu mencoba lagi.
 
 **Upload ke Google Play ditolak karena 16 KB page size**
 Library native liveness engine 5.7.21A belum mendukung 16 KB page size. Lihat catatan di [Komponen liveness engine](#komponen-liveness-engine).
@@ -425,10 +398,10 @@ Token sudah kedaluwarsa atau diterbitkan oleh environment lain. Login ulang di h
 Liveness memerlukan kamera fisik dan library native ARM (`arm64-v8a`, `armeabi-v7a`). Uji di perangkat fisik.
 
 **Build release gagal: `Direct local .aar file dependencies are not supported when building an AAR`**
-Modul library di proyek Anda bergantung langsung pada file `.aar` lokal, misalnya `implementation(files("libs/faceidv5.aar"))` di dalam modul library. Pakai modul `:faceidv5` dari repo ini (Opsi A), atau tambahkan AAR hanya di modul aplikasi (Opsi B).
+Modul library di proyek Anda bergantung langsung pada file `.aar` lokal, misalnya `implementation(files("libs/faceidv5.aar"))` di dalam modul library. Pakai modul `:faceidv5` dari repo ini seperti dijelaskan di [Instalasi](#instalasi).
 
 **`NoClassDefFoundError` untuk class liveness engine**
-Liveness engine tidak ikut terpasang. Pada Opsi B, tambahkan `implementation(files("libs/faceidv5.aar"))` di modul aplikasi.
+Liveness engine tidak ikut terpasang. Pastikan `include(":faceidv5")` ada di `settings.gradle.kts` dan folder `faceidv5` ikut disalin ke proyek.
 
 **Pesan "Akun tidak dapat melakukan eKYC"**
 Server menyatakan akun tidak eligible (`canEkyc = false`). Aplikasi host menerima `Failed("EKYC_NOT_ALLOWED")`.
