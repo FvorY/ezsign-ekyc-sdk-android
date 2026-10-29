@@ -46,6 +46,6 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
 
-    // Liveness engine AAR
+    // Megvii FaceID AAR
     implementation(files("libs/faceidv5.aar"))
 }
