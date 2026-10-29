@@ -29,7 +29,7 @@ SDK iOS dengan API, alur, teks, dan kode error yang sama ada di [ezsign-ekyc-sdk
 
 ## Demo
 
-APK dan IPA demo tersedia di halaman [Releases](https://github.com/FvorY/ezsign-ekyc-sdk-ios/releases) repositori iOS, versi terbaru [demo-ekyc-1.3](https://github.com/FvorY/ezsign-ekyc-sdk-ios/releases/tag/demo-ekyc-1.3).
+APK dan IPA demo tersedia di halaman [Releases](https://github.com/FvorY/ezsign-ekyc-sdk-ios/releases) repositori iOS, versi terbaru [demo-ekyc-1.4](https://github.com/FvorY/ezsign-ekyc-sdk-ios/releases/tag/demo-ekyc-1.4).
 
 1. Pasang `ezSign-eKYC-Android.apk`. Izinkan *Install unknown apps* bila diminta.
 2. Login ke akun ezSign pada environment yang akan diuji, lalu salin token sesi dari `data.token` di respons login.
