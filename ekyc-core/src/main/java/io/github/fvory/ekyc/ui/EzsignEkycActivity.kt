@@ -3,8 +3,10 @@ package io.github.fvory.ekyc.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withResumed
@@ -19,34 +21,62 @@ internal class EzsignEkycActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEzsignEkycBinding
     private val viewModel: EkycViewModel by viewModels()
+    private lateinit var config: EkycConfig
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEzsignEkycBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val config = intent.getSerializableExtra(EXTRA_CONFIG) as? EkycConfig
-        if (config == null) {
+        config = intent.getSerializableExtra(EXTRA_CONFIG) as? EkycConfig ?: run {
             finishWithError("INVALID_CONFIG", "EkycConfig is missing")
             return
         }
 
         viewModel.init(config)
-        binding.toolbar.title = config.title
-        binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
-        binding.toolbar.setNavigationOnClickListener {
-            finishCancelled()
-        }
+        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+        // Same as the iOS SDK: back returns to the previous step, leaving the first step cancels
+        // the flow, and the result screen cannot be left while it finalizes.
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                when {
+                    currentFragment() is EkycResultFragment -> Unit
+                    supportFragmentManager.backStackEntryCount > 0 -> supportFragmentManager.popBackStack()
+                    else -> finishCancelled()
+                }
+            }
+        })
+        supportFragmentManager.addOnBackStackChangedListener { updateToolbar() }
 
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 replace(R.id.fragmentContainer, DemografiFragment())
             }
+            supportFragmentManager.executePendingTransactions()
+        }
+        updateToolbar()
+    }
+
+    private fun currentFragment(): Fragment? =
+        supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+
+    private fun updateToolbar() {
+        val fragment = currentFragment()
+        binding.toolbar.title = when (fragment) {
+            is OtpFragment -> "Verification Phone"
+            is LivenessInstructionFragment -> "Active Liveness Check"
+            is EkycResultFragment -> "Verification"
+            else -> config.title
+        }
+        when (fragment) {
+            is EkycResultFragment -> binding.toolbar.navigationIcon = null
+            is DemografiFragment -> binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_clear_material)
+            else -> binding.toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material)
         }
     }
 
     fun navigateToOtp() {
-        binding.toolbar.title = "Verification Phone"
         supportFragmentManager.commit {
             replace(R.id.fragmentContainer, OtpFragment())
             addToBackStack(null)
@@ -54,7 +84,6 @@ internal class EzsignEkycActivity : AppCompatActivity() {
     }
 
     fun navigateToLivenessInstruction() {
-        binding.toolbar.title = "Active Liveness Check"
         supportFragmentManager.commit {
             replace(R.id.fragmentContainer, LivenessInstructionFragment())
             addToBackStack(null)
@@ -69,6 +98,8 @@ internal class EzsignEkycActivity : AppCompatActivity() {
                 supportFragmentManager.commit {
                     replace(R.id.fragmentContainer, EkycResultFragment())
                 }
+                supportFragmentManager.executePendingTransactions()
+                updateToolbar()
             }
         }
     }

@@ -102,14 +102,7 @@ internal class LivenessInstructionFragment : Fragment() {
         MegLiveManager.getInstance().startDetect(activity, config, object : MegLiveDetectListener {
             override fun onPreDetectFinish(errorCode: Int, errorMessage: String?) {
                 if (errorCode != 1000) {
-                    activity.runOnUiThread {
-                        if (!isAdded) return@runOnUiThread
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Liveness tidak dapat dimulai")
-                            .setMessage(describeStartError(errorCode, errorMessage))
-                            .setPositiveButton("OK", null)
-                            .show()
-                    }
+                    activity.runOnUiThread { showMegviiError(errorCode, errorMessage) }
                 }
             }
 
@@ -117,10 +110,8 @@ internal class LivenessInstructionFragment : Fragment() {
                 activity.runOnUiThread {
                     if (errorCode == 1000) {
                         (activity as? EzsignEkycActivity)?.navigateToResult()
-                    } else if (errorCode == 1011) {
-                        Toast.makeText(context, "Liveness dibatalkan oleh pengguna", Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(context, errorMessage ?: "Liveness gagal ($errorCode)", Toast.LENGTH_LONG).show()
+                        showMegviiError(errorCode, errorMessage)
                     }
                 }
             }
@@ -135,19 +126,42 @@ internal class LivenessInstructionFragment : Fragment() {
         })
     }
 
-    /**
-     * Megvii validates its license against the host app's package name. AUTHENTICATION_FAIL /
-     * bundleid_error means that package name is not registered for the ezSign Megvii account.
-     */
-    private fun describeStartError(errorCode: Int, errorMessage: String?): String {
-        val raw = errorMessage ?: "Deteksi gagal dimulai ($errorCode)"
+    private fun showMegviiError(errorCode: Int, errorMessage: String?) {
+        if (!isAdded) return
+        AlertDialog.Builder(requireContext())
+            .setTitle(if (errorCode == MEGVII_USER_CANCEL) "Liveness Cancelled" else "Liveness Check Failed")
+            .setMessage(describeMegviiError(errorCode, errorMessage))
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
+    // Same grouping as the ezSign Flutter app. Megvii validates its license against the host
+    // app's package name, so AUTHENTICATION_FAIL / bundleid_error names the rejected package.
+    private fun describeMegviiError(errorCode: Int, errorMessage: String?): String {
+        val raw = errorMessage.orEmpty()
         val upper = raw.uppercase()
-        if (upper.contains("AUTHENTICATION_FAIL") || upper.contains("BUNDLEID")) {
-            val packageName = requireContext().packageName
-            return "Lisensi liveness menolak aplikasi $packageName. " +
-                "Package name ini harus didaftarkan pada akun Megvii ezSign. ($raw)"
+        val message = when {
+            upper.contains("AUTHENTICATION_FAIL") || upper.contains("BUNDLEID") ->
+                "The liveness license rejected ${requireContext().packageName}. " +
+                    "Register this package name with the ezSign Megvii account. ($raw)"
+            errorCode == MEGVII_USER_CANCEL -> return "Liveness has been cancelled"
+            errorCode == MEGVII_NO_CAMERA_PERMISSION ->
+                "Camera permission is required. Please allow camera access and try again."
+            errorCode in MEGVII_DEVICE_NOT_SUPPORTED ->
+                "Your device is currently not supported. Please try using a different device."
+            errorCode in MEGVII_RETRYABLE ->
+                "We couldn't complete the liveness check. Please try again in a few moments."
+            raw.isNotBlank() -> raw
+            else -> "We couldn't complete the liveness check."
         }
-        return raw
+        return "$message ($errorCode)"
+    }
+
+    private companion object {
+        const val MEGVII_USER_CANCEL = 1011
+        const val MEGVII_NO_CAMERA_PERMISSION = 1012
+        val MEGVII_DEVICE_NOT_SUPPORTED = setOf(1004, 1009, 1013)
+        val MEGVII_RETRYABLE = setOf(1001, 1002, 1003, 1005, 1006, 1007, 1008, 1010, 1014, 1016, 1017, 1018, 1019)
     }
 
     override fun onDestroyView() {

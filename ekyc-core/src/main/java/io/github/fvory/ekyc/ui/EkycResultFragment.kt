@@ -49,10 +49,10 @@ internal class EkycResultFragment : Fragment() {
 
             if (submitLivenessRes.isFailure) {
                 binding.resultProgress.visibility = View.GONE
-                binding.tvResultTitle.text = "Verifikasi Gagal"
-                binding.tvResultDesc.text = submitLivenessRes.exceptionOrNull()?.message ?: "Gagal memverifikasi liveness wajah."
+                binding.tvResultTitle.text = "Verification Failed"
+                binding.tvResultDesc.text = submitLivenessRes.exceptionOrNull()?.message ?: "Face liveness verification failed."
                 binding.btnFinish.isEnabled = true
-                binding.btnFinish.text = "Tutup"
+                binding.btnFinish.text = "Close"
                 binding.btnFinish.setOnClickListener {
                     (activity as? EzsignEkycActivity)?.finishWithError(
                         "LIVENESS_SUBMIT_FAILED",
@@ -74,10 +74,10 @@ internal class EkycResultFragment : Fragment() {
 
             if (updateRes.isFailure) {
                 binding.resultProgress.visibility = View.GONE
-                binding.tvResultTitle.text = "Pembaruan Gagal"
-                binding.tvResultDesc.text = updateRes.exceptionOrNull()?.message ?: "Gagal memperbarui data identitas."
+                binding.tvResultTitle.text = "Verification Failed"
+                binding.tvResultDesc.text = updateRes.exceptionOrNull()?.message ?: "Failed to update your identity data."
                 binding.btnFinish.isEnabled = true
-                binding.btnFinish.text = "Tutup"
+                binding.btnFinish.text = "Close"
                 binding.btnFinish.setOnClickListener {
                     (activity as? EzsignEkycActivity)?.finishWithError(
                         "UPDATE_PROFILE_FAILED",
@@ -93,14 +93,14 @@ internal class EkycResultFragment : Fragment() {
                 ?.takeIf { it.isNotBlank() } ?: DEFAULT_REGIS_STATUS
 
             binding.resultProgress.visibility = View.GONE
-            binding.tvResultTitle.text = "Verifikasi Selesai"
+            binding.tvResultTitle.text = "Verification Complete"
             binding.tvResultDesc.text = if (regisStatus in REKEY_STATUSES) {
-                "Data eKYC telah dikirim, tetapi server meminta data identitas diverifikasi ulang."
+                "Your data was submitted, but the server asks you to verify your identity again."
             } else {
-                "Data eKYC Anda telah berhasil diverifikasi dan sedang diproses oleh Registration Authority (RA)."
+                "Your personal identity has been verified and is waiting for RA approval."
             }
             binding.btnFinish.isEnabled = true
-            binding.btnFinish.text = "Selesai"
+            binding.btnFinish.text = "Finish"
         }
     }
 

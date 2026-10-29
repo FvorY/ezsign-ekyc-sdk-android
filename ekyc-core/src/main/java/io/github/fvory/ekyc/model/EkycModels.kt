@@ -5,7 +5,7 @@ import java.io.Serializable
 data class EkycConfig(
     val authToken: String,
     val baseUrl: String = "https://gtm.myesign.id/api",
-    val title: String = "Verifikasi Identitas (eKYC)",
+    val title: String = "Your Identity",
     val primaryColorHex: String = "#15C1E7"
 ) : Serializable
 

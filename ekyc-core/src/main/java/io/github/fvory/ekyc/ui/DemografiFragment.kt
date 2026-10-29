@@ -113,12 +113,12 @@ internal class DemografiFragment : Fragment() {
         }
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Konfirmasi Data Identitas")
-            .setMessage("NIK: $nik\nNama: $name\nTanggal Lahir: $birthDate\n\nPastikan data sudah sesuai sebelum melanjutkan.")
-            .setPositiveButton("Konfirmasi") { _, _ ->
+            .setTitle("Review Your Information")
+            .setMessage("Identity Number: $nik\nFullname: $name\nDate of Birth: $birthDate\n\nPlease confirm that the information you entered is correct.")
+            .setPositiveButton("Confirm") { _, _ ->
                 submitDemografi(nik, name, birthDate)
             }
-            .setNegativeButton("Periksa Kembali", null)
+            .setNegativeButton("Review", null)
             .show()
     }
 
