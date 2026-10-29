@@ -11,13 +11,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        flatDir {
-            dirs("ekyc-core/libs")
-        }
     }
 }
 
 rootProject.name = "ezsign-ekyc-sdk-android"
 
+include(":faceidv5")
 include(":ekyc-core")
 include(":sample")

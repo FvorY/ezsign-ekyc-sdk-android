@@ -64,7 +64,7 @@ APK dan IPA demo tersedia di halaman [Releases](https://github.com/FvorY/ezsign-
 
 | Komponen | Nilai |
 |---|---|
-| Library | `ekyc-core/libs/faceidv5.aar`, liveness engine versi **5.7.21A** |
+| Library | `faceidv5/faceidv5.aar` (modul `:faceidv5`), liveness engine versi **5.7.21A** |
 | Konversi | Referensi Android Support Library di AAR sudah dipetakan ke AndroidX; aplikasi host tidak perlu Jetifier |
 | Model deteksi | `ekyc-core/src/main/res/raw/faceidmodel.bin` (dibaca otomatis oleh engine dari `res/raw`) |
 | Resource layar deteksi | `liveness_*.png`, `liveness_*.m4a` (`raw`, `raw-en`), `livenessv5_sdk_strings.xml`, `livenessv5_sdk_colors.xml` (`values`, `values-en`, `values-id`). Engine mencarinya berdasarkan nama, jadi jangan diganti nama atau dihapus. |
@@ -90,16 +90,18 @@ Langkah demografi dan OTP tidak bergantung pada lisensi ini. Karena itu, masalah
 
 ## Instalasi
 
-Liveness engine ikut di repo ini sebagai file lokal `ekyc-core/libs/faceidv5.aar`. Gradle tidak menyertakan file AAR lokal ke artefak library yang dipublikasikan, jadi aplikasi host perlu mendapatkan AAR tersebut lewat salah satu cara berikut.
+Liveness engine ikut di repo ini sebagai file `faceidv5/faceidv5.aar`, dibungkus dalam modul Gradle `:faceidv5`. `ekyc-core` bergantung pada modul tersebut, bukan langsung pada file AAR, karena library Android tidak boleh bergantung langsung pada file `.aar` lokal (build release akan gagal). Gradle juga tidak menyertakan AAR pihak ketiga ke artefak library yang dipublikasikan, jadi aplikasi host perlu mendapatkan AAR tersebut lewat salah satu cara berikut.
 
 ### Opsi A: modul source (disarankan)
 
-1. Salin folder `ekyc-core` ke root proyek Anda, atau tambahkan repo ini sebagai git submodule.
-2. Daftarkan modulnya di `settings.gradle.kts`:
+1. Salin folder `ekyc-core` **dan** `faceidv5` ke root proyek Anda, atau tambahkan repo ini sebagai git submodule.
+2. Daftarkan kedua modul di `settings.gradle.kts`:
 
    ```kotlin
+   include(":faceidv5")
    include(":ekyc-core")
    // Jika letaknya di luar root proyek:
+   // project(":faceidv5").projectDir = file("../ezsign-ekyc-sdk-android/faceidv5")
    // project(":ekyc-core").projectDir = file("../ezsign-ekyc-sdk-android/ekyc-core")
    ```
 
@@ -113,7 +115,7 @@ Liveness engine ikut di repo ini sebagai file lokal `ekyc-core/libs/faceidv5.aar
 
 4. Pastikan version catalog proyek Anda punya alias yang dipakai `ekyc-core/build.gradle.kts` (lihat [`gradle/libs.versions.toml`](gradle/libs.versions.toml)). Cara lainnya, ganti alias tersebut dengan koordinat dependensi langsung.
 
-Dengan opsi ini, AAR liveness engine, model, dan resource layar deteksi ikut terpasang otomatis.
+Dengan opsi ini, AAR liveness engine, model, resource layar deteksi, dan aturan R8 ikut terpasang otomatis, baik untuk build debug maupun release (termasuk dengan minify dan shrink resource).
 
 ### Opsi B: JitPack
 
@@ -129,7 +131,7 @@ Dengan opsi ini, AAR liveness engine, model, dan resource layar deteksi ikut ter
    }
    ```
 
-2. Salin `ekyc-core/libs/faceidv5.aar` ke `app/libs/`, lalu tambahkan SDK dan liveness engine di `app/build.gradle.kts`:
+2. Salin `faceidv5/faceidv5.aar` ke `app/libs/`, lalu tambahkan SDK dan liveness engine di `app/build.gradle.kts`:
 
    ```kotlin
    dependencies {
@@ -422,6 +424,9 @@ Token sudah kedaluwarsa atau diterbitkan oleh environment lain. Login ulang di h
 **Kamera tidak terbuka atau liveness tidak muncul di emulator**
 Liveness memerlukan kamera fisik dan library native ARM (`arm64-v8a`, `armeabi-v7a`). Uji di perangkat fisik.
 
+**Build release gagal: `Direct local .aar file dependencies are not supported when building an AAR`**
+Modul library di proyek Anda bergantung langsung pada file `.aar` lokal, misalnya `implementation(files("libs/faceidv5.aar"))` di dalam modul library. Pakai modul `:faceidv5` dari repo ini (Opsi A), atau tambahkan AAR hanya di modul aplikasi (Opsi B).
+
 **`NoClassDefFoundError` untuk class liveness engine**
 Liveness engine tidak ikut terpasang. Pada Opsi B, tambahkan `implementation(files("libs/faceidv5.aar"))` di modul aplikasi.
 
@@ -431,8 +436,9 @@ Server menyatakan akun tidak eligible (`canEkyc = false`). Aplikasi host menerim
 ## Struktur proyek
 
 ```
+faceidv5/                      Modul pembungkus liveness engine
+  faceidv5.aar                 Liveness engine 5.7.21A (dikonversi ke AndroidX)
 ekyc-core/                     Library SDK
-  libs/faceidv5.aar            Liveness engine 5.7.21A (dikonversi ke AndroidX)
   src/main/java/io/github/fvory/ekyc/
     EzsignEkyc.kt              Entry point publik
     model/EkycModels.kt        EkycConfig, EkycResult

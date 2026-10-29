@@ -47,5 +47,5 @@ dependencies {
     implementation(libs.gson)
 
     // Liveness engine AAR
-    implementation(files("libs/faceidv5.aar"))
+    implementation(project(":faceidv5"))
 }
