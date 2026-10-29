@@ -1,6 +1,6 @@
 # ezsign-ekyc-sdk-android
 
-SDK Android native (Kotlin) untuk alur verifikasi identitas elektronik (eKYC) ezSign. Satu pemanggilan menjalankan seluruh alur: validasi data kependudukan, verifikasi OTP nomor handphone, active liveness wajah dengan Megvii FaceID, sampai finalisasi data ke server ezSign.
+SDK Android native (Kotlin) untuk alur verifikasi identitas elektronik (eKYC) ezSign. Satu pemanggilan menjalankan seluruh alur: validasi data kependudukan, verifikasi OTP nomor handphone, active liveness wajah, sampai finalisasi data ke server ezSign.
 
 SDK iOS dengan API, alur, teks, dan kode error yang sama ada di [ezsign-ekyc-sdk-ios](https://github.com/FvorY/ezsign-ekyc-sdk-ios).
 
@@ -9,7 +9,7 @@ SDK iOS dengan API, alur, teks, dan kode error yang sama ada di [ezsign-ekyc-sdk
 - [Demo](#demo)
 - [Fitur](#fitur)
 - [Persyaratan](#persyaratan)
-- [Komponen Megvii FaceID](#komponen-megvii-faceid)
+- [Komponen liveness engine](#komponen-liveness-engine)
 - [Prasyarat lisensi liveness (wajib)](#prasyarat-lisensi-liveness-wajib)
 - [Instalasi](#instalasi)
 - [Mulai cepat](#mulai-cepat)
@@ -18,7 +18,7 @@ SDK iOS dengan API, alur, teks, dan kode error yang sama ada di [ezsign-ekyc-sdk
 - [Arsitektur liveness](#arsitektur-liveness)
 - [Endpoint server](#endpoint-server)
 - [Penanganan hasil dan kode error](#penanganan-hasil-dan-kode-error)
-- [Kode error Megvii](#kode-error-megvii)
+- [Kode error liveness engine](#kode-error-liveness-engine)
 - [Izin, manifest, dan ProGuard](#izin-manifest-dan-proguard)
 - [Data dan privasi](#data-dan-privasi)
 - [Keselarasan Android dan iOS](#keselarasan-android-dan-ios)
@@ -35,14 +35,14 @@ APK dan IPA demo tersedia di halaman [Releases](https://github.com/FvorY/ezsign-
 2. Login ke akun ezSign pada environment yang akan diuji, lalu salin token sesi dari `data.token` di respons login.
 3. Buka aplikasi demo, pilih environment (DEV / STG / PROD) atau isi Base URL, tempel token, lalu ketuk **Mulai Verifikasi eKYC**.
 
-> APK demo memakai package `com.sign.livenessdemo`, yang sudah terdaftar di lisensi Megvii ezSign, dan bisa terpasang berdampingan dengan aplikasi ezSign resmi. Lihat [Prasyarat lisensi liveness](#prasyarat-lisensi-liveness-wajib).
+> APK demo memakai package `com.sign.livenessdemo`, yang sudah terdaftar di lisensi liveness ezSign, dan bisa terpasang berdampingan dengan aplikasi ezSign resmi. Lihat [Prasyarat lisensi liveness](#prasyarat-lisensi-liveness-wajib).
 
 ## Fitur
 
 - **Pemeriksaan status eKYC**: memastikan akun boleh melakukan eKYC (`canEkyc`) sebelum alur dimulai.
 - **Validasi demografi**: NIK 16 digit, nama lengkap, dan tanggal lahir divalidasi ke server.
 - **Verifikasi OTP**: nomor handphone dinormalkan ke format `+62…`, OTP dikirim lewat SMS dengan cooldown kirim ulang, lalu diverifikasi.
-- **Active liveness**: layar instruksi persiapan, lalu deteksi wajah native Megvii FaceID.
+- **Active liveness**: layar instruksi persiapan, lalu deteksi wajah native.
 - **Finalisasi otomatis**: mengirim hasil liveness, memperbarui biodata akun, me-refresh sesi, dan mengembalikan `regisStatus` dari server.
 - **UI siap pakai**: tampilan mengikuti aplikasi ezSign (font Inter, warna, ilustrasi). SDK memakai tema terang sendiri sehingga tema aplikasi host tidak ikut berubah.
 - **Hasil bertipe**: `EkycResult.Success`, `EkycResult.Failed`, atau `EkycResult.Cancelled`.
@@ -54,43 +54,43 @@ APK dan IPA demo tersedia di halaman [Releases](https://github.com/FvorY/ezsign-
 | Android minimum | API 24 (Android 7.0) |
 | compileSdk / targetSdk SDK | 34 |
 | Java / Kotlin JVM target | 17 |
-| ABI | `arm64-v8a`, `armeabi-v7a` (library native Megvii) |
+| ABI | `arm64-v8a`, `armeabi-v7a` (library native liveness engine) |
 | Orientasi | Portrait |
 | Perangkat | Perangkat fisik dengan kamera depan (liveness tidak berjalan di emulator) |
-| Jaringan | Akses ke `baseUrl` ezSign dan ke `https://api-idn.megvii.com` |
+| Jaringan | Akses HTTPS ke `baseUrl` ezSign dan ke layanan liveness (region Indonesia) |
 | Akun | Token sesi akun ezSign yang valid di environment yang dipakai |
 
-## Komponen Megvii FaceID
+## Komponen liveness engine
 
 | Komponen | Nilai |
 |---|---|
-| Library | `ekyc-core/libs/faceidv5.aar`, Megvii FaceID Liveness SDK versi **5.7.21A** |
+| Library | `ekyc-core/libs/faceidv5.aar`, liveness engine versi **5.7.21A** |
 | Konversi | Referensi Android Support Library di AAR sudah dipetakan ke AndroidX; aplikasi host tidak perlu Jetifier |
-| Model deteksi | `ekyc-core/src/main/res/raw/faceidmodel.bin` (dibaca otomatis oleh Megvii dari `res/raw`) |
-| Resource layar deteksi | `liveness_*.png`, `liveness_*.m4a` (`raw`, `raw-en`), `livenessv5_sdk_strings.xml`, `livenessv5_sdk_colors.xml` (`values`, `values-en`, `values-id`). Megvii mencarinya berdasarkan nama, jadi jangan diganti nama atau dihapus. |
+| Model deteksi | `ekyc-core/src/main/res/raw/faceidmodel.bin` (dibaca otomatis oleh engine dari `res/raw`) |
+| Resource layar deteksi | `liveness_*.png`, `liveness_*.m4a` (`raw`, `raw-en`), `livenessv5_sdk_strings.xml`, `livenessv5_sdk_colors.xml` (`values`, `values-en`, `values-id`). Engine mencarinya berdasarkan nama, jadi jangan diganti nama atau dihapus. |
 | Bahasa layar deteksi | Inggris (`setLanguage("en")`) |
-| Host Megvii | `https://api-idn.megvii.com` (region Indonesia) |
-| Mode integrasi | Normal (mode 0): lisensi dan konfigurasi liveness diambil oleh SDK Megvii |
+| Region layanan | Indonesia (sudah dikonfigurasi di SDK) |
+| Mode integrasi | Normal (mode 0): lisensi dan konfigurasi liveness diambil otomatis oleh engine |
 
-Dokumen Megvii mencantumkan dukungan Android 5.0–14. SDK ini memakai batas yang lebih ketat, yaitu API 24.
+Liveness engine mendukung Android 5.0–14. SDK ini memakai batas yang lebih ketat, yaitu API 24.
 
-> **16 KB page size.** `libfaceidlivenessv5.so` di versi 5.7.21A masih memakai alignment 4 KB. Google Play mewajibkan dukungan 16 KB page size untuk aplikasi yang menargetkan Android 15 (API 35) ke atas. Megvii menambahkan dukungan ini di versi 5.8.5. Untuk aplikasi yang menargetkan API 35+, minta paket Megvii 5.8.5 ke tim ezSign lalu ganti `faceidv5.aar` dan resource-nya.
+> **16 KB page size.** `libfaceidlivenessv5.so` di versi 5.7.21A masih memakai alignment 4 KB. Google Play mewajibkan dukungan 16 KB page size untuk aplikasi yang menargetkan Android 15 (API 35) ke atas. Dukungan ini tersedia mulai liveness engine versi 5.8.5. Untuk aplikasi yang menargetkan API 35+, minta paket engine 5.8.5 ke tim ezSign lalu ganti `faceidv5.aar` dan resource-nya.
 
 ## Prasyarat lisensi liveness (wajib)
 
-Lisensi Megvii FaceID terikat pada **package name aplikasi** yang menjalankan SDK. Saat liveness dimulai, SDK Megvii mengirim `bundle_id` (package name) dan signature APK ke server Megvii, lalu memasang lisensi dari respons server. Kalau package name belum terdaftar di akun Megvii ezSign, liveness gagal sebelum kamera terbuka dengan kode `1003` (`AUTHENTICATION_FAIL{illegal_param}` atau `AUTHENTICATION_FAIL{bundleid_error}`).
+Lisensi liveness terikat pada **package name aplikasi** yang menjalankan SDK. Saat liveness dimulai, engine mengirim `bundle_id` (package name) dan signature APK ke server lisensi, lalu memasang lisensi dari respons server. Kalau package name belum terdaftar di lisensi liveness ezSign, liveness gagal sebelum kamera terbuka dengan kode `1003` (`AUTHENTICATION_FAIL{illegal_param}` atau `AUTHENTICATION_FAIL{bundleid_error}`).
 
 Sebelum integrasi:
 
 1. Tentukan `applicationId` final aplikasi Anda untuk debug dan release, termasuk suffix seperti `.debug` bila ada.
-2. Minta tim ezSign mendaftarkan setiap `applicationId` tersebut ke lisensi Megvii FaceID.
+2. Minta tim ezSign mendaftarkan setiap `applicationId` tersebut ke lisensi liveness.
 3. Untuk iOS, daftarkan juga Bundle ID aplikasinya.
 
 Langkah demografi dan OTP tidak bergantung pada lisensi ini. Karena itu, masalah lisensi baru terlihat di layar **Active Liveness Check**.
 
 ## Instalasi
 
-Library Megvii ikut di repo ini sebagai file lokal `ekyc-core/libs/faceidv5.aar`. Gradle tidak menyertakan file AAR lokal ke artefak library yang dipublikasikan, jadi aplikasi host perlu mendapatkan AAR tersebut lewat salah satu cara berikut.
+Liveness engine ikut di repo ini sebagai file lokal `ekyc-core/libs/faceidv5.aar`. Gradle tidak menyertakan file AAR lokal ke artefak library yang dipublikasikan, jadi aplikasi host perlu mendapatkan AAR tersebut lewat salah satu cara berikut.
 
 ### Opsi A: modul source (disarankan)
 
@@ -113,7 +113,7 @@ Library Megvii ikut di repo ini sebagai file lokal `ekyc-core/libs/faceidv5.aar`
 
 4. Pastikan version catalog proyek Anda punya alias yang dipakai `ekyc-core/build.gradle.kts` (lihat [`gradle/libs.versions.toml`](gradle/libs.versions.toml)). Cara lainnya, ganti alias tersebut dengan koordinat dependensi langsung.
 
-Dengan opsi ini, AAR Megvii, model, dan resource layar deteksi ikut terpasang otomatis.
+Dengan opsi ini, AAR liveness engine, model, dan resource layar deteksi ikut terpasang otomatis.
 
 ### Opsi B: JitPack
 
@@ -129,7 +129,7 @@ Dengan opsi ini, AAR Megvii, model, dan resource layar deteksi ikut terpasang ot
    }
    ```
 
-2. Salin `ekyc-core/libs/faceidv5.aar` ke `app/libs/`, lalu tambahkan SDK dan library Megvii di `app/build.gradle.kts`:
+2. Salin `ekyc-core/libs/faceidv5.aar` ke `app/libs/`, lalu tambahkan SDK dan liveness engine di `app/build.gradle.kts`:
 
    ```kotlin
    dependencies {
@@ -248,14 +248,14 @@ Aplikasi host
   └─ EzsignEkyc.Contract().launch(config)
        1. Data Identitas  ── ekyc-status → checkdata → verifyNik → checkdemografi
        2. Verifikasi OTP  ── validatephone (kirim OTP) → verifyotp
-       3. Active Liveness ── get-biz-token → Megvii FaceID (kamera)
+       3. Active Liveness ── get-biz-token → liveness engine (kamera)
        4. Hasil           ── liveness-face-id → update-mobile → auth/user/refresh
   ◀─ EkycResult
 ```
 
 1. **Data Identitas** (judul `config.title`): saat layar dibuka, SDK memeriksa `ekyc-status`. Jika `canEkyc` bernilai `false`, alur berakhir dengan `Failed("EKYC_NOT_ALLOWED")`. Pengguna mengisi NIK (16 digit), nama sesuai KTP, dan tanggal lahir, lalu mengonfirmasi data di dialog **Review Your Information**. Alurnya sama dengan aplikasi ezSign: tidak ada foto KTP maupun selfie terpisah.
 2. **Verification Phone**: nomor handphone dinormalkan ke `+62…` (minimal 9 digit setelah `+62`). Setelah OTP terkirim lewat SMS, pengguna memasukkan 6 digit kode. Token dari respons `verifyotp` disimpan untuk dipakai saat finalisasi.
-3. **Active Liveness Check**: menampilkan instruksi persiapan. Setelah izin kamera diberikan, SDK meminta `biz_token` dan `liveness_id` ke server ezSign, lalu membuka layar deteksi Megvii.
+3. **Active Liveness Check**: menampilkan instruksi persiapan. Setelah izin kamera diberikan, SDK meminta `biz_token` dan `liveness_id` ke server ezSign, lalu membuka layar deteksi liveness.
 4. **Verification**: SDK mengirim hasil liveness, memperbarui biodata akun beserta nomor handphone, lalu me-refresh sesi. `regisStatus` dari respons refresh dikembalikan ke aplikasi host.
 
 Navigasi:
@@ -266,17 +266,17 @@ Navigasi:
 
 ## Arsitektur liveness
 
-Dokumen Megvii membagi autentikasi liveness menjadi lima langkah. Kredensial Megvii (`api_key`, `api_secret`) hanya ada di server ezSign, tidak pernah di aplikasi.
+Autentikasi liveness terdiri dari lima langkah. Kredensial layanan liveness (`api_key`, `api_secret`) hanya ada di server ezSign, tidak pernah di aplikasi.
 
-| Langkah Megvii | Dikerjakan oleh | Implementasi |
+| Langkah | Dikerjakan oleh | Implementasi |
 |---|---|---|
 | 1. Membuat `sign` dari `api_key`/`api_secret` | Server ezSign | — |
 | 2. `get_biz_token` | Server ezSign | SDK memanggil `register/user/get-biz-token`, respons berisi `biz_token` dan `liveness_id`. |
-| 3. Preprocessing (lisensi dan konfigurasi) | SDK Megvii di perangkat | `MegLiveManager.startDetect(...)`, hasil di `onPreDetectFinish`. |
-| 4. Deteksi wajah dan callback hasil | SDK Megvii di perangkat | Hasil di `onDetectFinish`; kode selain `1000` ditangani sesuai [Kode error Megvii](#kode-error-megvii). |
+| 3. Preprocessing (lisensi dan konfigurasi) | Liveness engine di perangkat | Hasil di callback `onPreDetectFinish`. |
+| 4. Deteksi wajah dan callback hasil | Liveness engine di perangkat | Hasil di callback `onDetectFinish`; kode selain `1000` ditangani sesuai [Kode error liveness engine](#kode-error-liveness-engine). |
 | 5. Verify (perbandingan dan anti-spoofing) | Server ezSign | SDK memanggil `register/user/liveness-face-id` dengan `biz_token`, `verify_id = liveness_id`, `data_type = 0` (data SDK 5.x lewat `biz_token`), dan `encryption_type = 0`. |
 
-Respons Verify Megvii (`result_code` seperti `1000 SUCCESS`, `2000 PASS_LIVING_NOT_THE_SAME`, `4100 FAIL_LIVING_FACE_ATTACK`/`VIDEO_LACK_FRAMES`, serta info risiko perangkat dan wajah) dievaluasi oleh server ezSign dan tidak diteruskan ke aplikasi. Aplikasi hanya menerima `code` dan `message` ezSign. Jika Verify tidak lolos, alur berakhir dengan `Failed("LIVENESS_SUBMIT_FAILED")` berisi pesan dari server.
+Respons Verify (`result_code` seperti `1000 SUCCESS`, `2000 PASS_LIVING_NOT_THE_SAME`, `4100 FAIL_LIVING_FACE_ATTACK`/`VIDEO_LACK_FRAMES`, serta info risiko perangkat dan wajah) dievaluasi oleh server ezSign dan tidak diteruskan ke aplikasi. Aplikasi hanya menerima `code` dan `message` ezSign. Jika Verify tidak lolos, alur berakhir dengan `Failed("LIVENESS_SUBMIT_FAILED")` berisi pesan dari server.
 
 ## Endpoint server
 
@@ -306,20 +306,20 @@ Respons dianggap berhasil jika HTTP 2xx dan field `code` bernilai `200` atau `0`
 | `LIVENESS_SUBMIT_FAILED` | `liveness-face-id` ditolak, misalnya wajah tidak cocok, liveness tidak lolos, atau error server. | Beri pengguna kesempatan mengulang eKYC. |
 | `UPDATE_PROFILE_FAILED` | `update-mobile` ditolak. | Tampilkan `message`, lalu ulangi atau hubungi dukungan. |
 
-Error di langkah demografi, OTP, pembuatan biz token, dan deteksi Megvii ditampilkan di layar masing-masing. Pengguna bisa mencoba lagi tanpa keluar dari alur, sehingga error ini tidak dikembalikan sebagai `Failed`.
+Error di langkah demografi, OTP, pembuatan biz token, dan deteksi liveness ditampilkan di layar masing-masing. Pengguna bisa mencoba lagi tanpa keluar dari alur, sehingga error ini tidak dikembalikan sebagai `Failed`.
 
-## Kode error Megvii
+## Kode error liveness engine
 
-Kode berikut berasal dari `onPreDetectFinish` dan `onDetectFinish` (dokumen Megvii FaceID SDK, bagian 3.1.11). SDK menampilkannya dalam dialog **Liveness Check Failed** dengan pengelompokan pesan yang sama seperti aplikasi ezSign, diikuti kodenya, misalnya `(1016)`.
+Kode berikut berasal dari callback `onPreDetectFinish` dan `onDetectFinish`. SDK menampilkannya dalam dialog **Liveness Check Failed** dengan pengelompokan pesan yang sama seperti aplikasi ezSign, diikuti kodenya, misalnya `(1016)`.
 
-| Kode | Pesan Megvii | Arti | Pesan yang ditampilkan SDK |
+| Kode | Pesan engine | Arti | Pesan yang ditampilkan SDK |
 |---|---|---|---|
 | 1000 | `LIVENESS_FINISH` | Liveness selesai | — (lanjut ke finalisasi) |
 | 1001 | `BIZ_TOKEN_DENIED` | `biz_token` tidak valid | Coba lagi* |
 | 1002 | `ILLEGAL_PARAMETER:{…}` | Parameter tidak valid | Coba lagi* |
 | 1003 | `AUTHENTICATION_FAIL:{…}` | Autentikasi lisensi gagal | Package name yang ditolak dan cara mendaftarkannya |
 | 1004 | `MOBILE_PHONE_NOT_SUPPORT` | Perangkat tidak didukung | Perangkat tidak didukung** |
-| 1005 | Nama exception | Exception internal Megvii | Coba lagi* |
+| 1005 | Nama exception | Exception internal engine | Coba lagi* |
 | 1006 | `REQUEST_FREQUENTLY` | Pemanggilan bersamaan di perangkat yang sama | Coba lagi* |
 | 1007 | `NETWORK_TIME_OUT` | Request jaringan timeout | Coba lagi* |
 | 1008 | `INTERNAL_ERROR` | Error konfigurasi jaringan | Coba lagi* |
@@ -333,8 +333,8 @@ Kode berikut berasal dari `onPreDetectFinish` dan `onDetectFinish` (dokumen Megv
 | 1017 | `GO_TO_BACKGROUND` | Aplikasi masuk background | Coba lagi* |
 | 1018 | `LIVENESS_TIME_OUT` | Pengguna tidak bergerak terlalu lama | Coba lagi* |
 | 1019 | `DATA_UPLOAD_FAIL` | Upload data gagal | Coba lagi* |
-| 1022–1026 | `…SCRN…`, `VIDEO_SAVE_FAIL`, `NO_AUDIO_RECORD_PERMISSION` | Perekaman layar/audio | Pesan Megvii apa adanya (fitur ini tidak dipakai SDK) |
-| lainnya | — | Kode baru dari Megvii | Pesan Megvii apa adanya |
+| 1022–1026 | `…SCRN…`, `VIDEO_SAVE_FAIL`, `NO_AUDIO_RECORD_PERMISSION` | Perekaman layar/audio | Pesan engine apa adanya (fitur ini tidak dipakai SDK) |
+| lainnya | — | Kode baru dari engine | Pesan engine apa adanya |
 
 \* `We couldn't complete the liveness check. Please try again in a few moments.`
 \** `Your device is currently not supported. Please try using a different device.`
@@ -346,40 +346,32 @@ Setelah dialog ditutup, pengguna tetap di layar **Active Liveness Check** dan bi
 Manifest SDK digabung otomatis ke aplikasi host dan sudah mendeklarasikan:
 
 - Izin `CAMERA`, `INTERNET`, dan `ACCESS_NETWORK_STATE`.
-- `EzsignEkycActivity` dan activity Megvii FaceID (portrait, tidak di-export).
+- `EzsignEkycActivity` dan activity layar deteksi liveness (portrait, tidak di-export).
 
-Izin kamera diminta saat runtime ketika pengguna menekan **Start Liveness**, sebelum layar Megvii dibuka.
+Izin kamera diminta saat runtime ketika pengguna menekan **Start Liveness**, sebelum layar deteksi dibuka.
 
-SDK tidak memakai fitur perekaman layar Megvii, sehingga `MediaProjectionService` dan izin `FOREGROUND_SERVICE_MEDIA_PROJECTION` tidak diperlukan. Jika fitur ini diaktifkan di konsol Megvii, aplikasi host perlu menambahkan service tersebut sesuai dokumen Megvii bagian 2.1.
+SDK tidak memakai fitur perekaman layar liveness, sehingga service perekaman layar dan izin `FOREGROUND_SERVICE_MEDIA_PROJECTION` tidak diperlukan.
 
-Aturan ProGuard/R8 ikut terpasang lewat `consumer-rules.pro`:
-
-```proguard
--keep class com.megvii.** { *; }
--keep class com.meglive.** { *; }
--keep class io.github.fvory.ekyc.** { *; }
-```
-
-Jika library Megvii ditambahkan manual (Opsi B), pastikan aturan `com.megvii` di atas juga ada di konfigurasi R8 aplikasi.
+Aturan ProGuard/R8 untuk SDK dan liveness engine ikut terpasang otomatis lewat `ekyc-core/consumer-rules.pro`. Jika liveness engine ditambahkan manual (Opsi B), salin seluruh isi `consumer-rules.pro` ke konfigurasi R8 aplikasi.
 
 ## Data dan privasi
 
 - NIK, nama, tanggal lahir, nomor handphone, dan OTP hanya dikirim ke `baseUrl` ezSign lewat HTTPS dan tidak disimpan di perangkat setelah alur selesai.
-- Video dan foto wajah diambil dan dikirim oleh SDK Megvii ke host Megvii. SDK ezSign tidak menyimpan file liveness lokal (callback `onLivenessFileCallback` dan `onLivenessLocalFileCallBack` diabaikan).
+- Video dan foto wajah diambil dan dikirim oleh liveness engine langsung ke layanan liveness. SDK ezSign tidak menyimpan file liveness lokal (callback `onLivenessFileCallback` dan `onLivenessLocalFileCallBack` diabaikan).
 - SDK tidak menulis log berisi token, data identitas, maupun body HTTP.
 
 ## Keselarasan Android dan iOS
 
-Kedua SDK memakai alur, endpoint, teks layar, aturan validasi, kode `errorCode`, nilai `regisStatus`, dan pemetaan kode error Megvii yang sama. Perbedaannya hanya pada hal yang memang khas platform:
+Kedua SDK memakai alur, endpoint, teks layar, aturan validasi, kode `errorCode`, nilai `regisStatus`, dan pemetaan kode error liveness engine yang sama. Perbedaannya hanya pada hal yang memang khas platform:
 
 | Aspek | Android | iOS |
 |---|---|---|
 | Entry point | `EzsignEkyc.Contract()` / `EzsignEkyc.start()` | `EzsignEkyc.start(from:config:completion:)` |
 | Hasil | `EkycResult.Success` / `Failed` / `Cancelled` | `.success` / `.failure` / `.cancelled` |
-| Library Megvii | `faceidv5.aar` 5.7.21A | `MegLiveV5Detect` + `MGFaceIDBaseKit` (build Desember 2024) |
+| Liveness engine | `faceidv5.aar` 5.7.21A | Framework liveness statis (build Desember 2024) |
 | Identitas lisensi | `applicationId` | Bundle ID |
 | Izin kamera | Runtime permission | `NSCameraUsageDescription` + permintaan izin sistem |
-| Deteksi posisi tegak perangkat | Bawaan Megvii | Dinonaktifkan (`phoneVertical = Disable`), sama seperti aplikasi ezSign |
+| Deteksi posisi tegak perangkat | Bawaan engine | Dinonaktifkan (`phoneVertical = Disable`), sama seperti aplikasi ezSign |
 | Kode `INVALID_CONFIG` | Ada (Activity tanpa config) | Tidak ada (config wajib di API) |
 | Kode `INCOMPLETE` | Tidak ada | Ada (layar hasil ditutup sebelum finalisasi selesai) |
 
@@ -391,7 +383,7 @@ Modul `sample` adalah aplikasi simulasi fintech yang memanggil SDK.
 ./gradlew :sample:assembleDebug
 ```
 
-Sample memakai `applicationId` `com.sign.livenessdemo`, yang sudah terdaftar di lisensi Megvii ezSign. Lisensi Megvii terikat pada package name, jadi untuk menguji dengan package lain, gunakan parameter `ekycApplicationId`:
+Sample memakai `applicationId` `com.sign.livenessdemo`, yang sudah terdaftar di lisensi liveness ezSign. Lisensi liveness terikat pada package name, jadi untuk menguji dengan package lain, gunakan parameter `ekycApplicationId`:
 
 ```bash
 ./gradlew :sample:assembleDebug -PekycApplicationId=<package terdaftar>
@@ -410,19 +402,19 @@ SDK menampilkan dialog seperti ini:
 
 ```
 The liveness license rejected com.example.myapp. Register this package name with
-the ezSign Megvii account. (AUTHENTICATION_FAIL{illegal_param}) (1003)
+the ezSign liveness license. (AUTHENTICATION_FAIL{illegal_param}) (1003)
 ```
 
-Package name yang tertulis di dialog belum terdaftar di lisensi Megvii ezSign. Kode di dalam kurung bisa berupa `AUTHENTICATION_FAIL{illegal_param}` atau `bundleid_error`. Daftarkan package name tersebut, atau build sample dengan `-PekycApplicationId=<package terdaftar>`.
+Package name yang tertulis di dialog belum terdaftar di lisensi liveness ezSign. Kode di dalam kurung bisa berupa `AUTHENTICATION_FAIL{illegal_param}` atau `bundleid_error`. Daftarkan package name tersebut, atau build sample dengan `-PekycApplicationId=<package terdaftar>`.
 
 **Dialog berisi kode `(1014)` (`FACE_INIT_FAIL`)**
-Kamera deteksi Megvii gagal dibuka. Penyebab yang paling umum adalah `faceidv5.aar` versi asli dari Megvii yang masih memakai Android Support Library: logcat menampilkan `NoClassDefFoundError: Failed resolution of: Landroid/support/v4/app/ActivityCompat;`. Pakai `faceidv5.aar` dari repo ini, yang sudah dikonversi ke AndroidX, atau aktifkan `android.enableJetifier=true` bila Anda harus memakai AAR asli. Pastikan juga kamera tidak sedang dipakai aplikasi lain.
+Kamera deteksi gagal dibuka. Penyebab yang paling umum adalah `faceidv5.aar` versi asli dari vendor yang masih memakai Android Support Library: logcat menampilkan `NoClassDefFoundError: Failed resolution of: Landroid/support/v4/app/ActivityCompat;`. Pakai `faceidv5.aar` dari repo ini, yang sudah dikonversi ke AndroidX, atau aktifkan `android.enableJetifier=true` bila Anda harus memakai AAR asli. Pastikan juga kamera tidak sedang dipakai aplikasi lain.
 
-**Layar deteksi Megvii langsung tertutup dengan kode `(1016)` (`LIVENESS_FAILURE`)**
-Jika layar deteksi tertutup kurang dari sedetik setelah terbuka, resource layar deteksi Megvii tidak ikut terpasang; logcat menampilkan `Invalid resource ID 0x00000000`. Resource ini (`liveness_*.png`, `liveness_*.m4a`, `livenessv5_sdk_*.xml`) tidak termasuk dalam `faceidv5.aar` dan sudah disertakan di `ekyc-core/src/main/res`. Jika Anda memasang SDK lewat Opsi B, salin juga resource tersebut ke modul aplikasi. Jika layar sempat berjalan, kode ini berarti pengguna tidak lolos deteksi; minta pengguna mengikuti instruksi di layar persiapan lalu mencoba lagi.
+**Layar deteksi langsung tertutup dengan kode `(1016)` (`LIVENESS_FAILURE`)**
+Jika layar deteksi tertutup kurang dari sedetik setelah terbuka, resource layar deteksi tidak ikut terpasang; logcat menampilkan `Invalid resource ID 0x00000000`. Resource ini (`liveness_*.png`, `liveness_*.m4a`, `livenessv5_sdk_*.xml`) tidak termasuk dalam `faceidv5.aar` dan sudah disertakan di `ekyc-core/src/main/res`. Jika Anda memasang SDK lewat Opsi B, salin juga resource tersebut ke modul aplikasi. Jika layar sempat berjalan, kode ini berarti pengguna tidak lolos deteksi; minta pengguna mengikuti instruksi di layar persiapan lalu mencoba lagi.
 
 **Upload ke Google Play ditolak karena 16 KB page size**
-Library native Megvii 5.7.21A belum mendukung 16 KB page size. Lihat catatan di [Komponen Megvii FaceID](#komponen-megvii-faceid).
+Library native liveness engine 5.7.21A belum mendukung 16 KB page size. Lihat catatan di [Komponen liveness engine](#komponen-liveness-engine).
 
 **`Unauthorized` / `JWT validation failed`**
 Token sudah kedaluwarsa atau diterbitkan oleh environment lain. Login ulang di host yang sama dengan `baseUrl`, lalu pakai `data.token` dari respons login. Jangan memakai token dari respons OTP sebagai `authToken`.
@@ -430,8 +422,8 @@ Token sudah kedaluwarsa atau diterbitkan oleh environment lain. Login ulang di h
 **Kamera tidak terbuka atau liveness tidak muncul di emulator**
 Liveness memerlukan kamera fisik dan library native ARM (`arm64-v8a`, `armeabi-v7a`). Uji di perangkat fisik.
 
-**`NoClassDefFoundError: com/megvii/...`**
-Library Megvii tidak ikut terpasang. Pada Opsi B, tambahkan `implementation(files("libs/faceidv5.aar"))` di modul aplikasi.
+**`NoClassDefFoundError` untuk class liveness engine**
+Liveness engine tidak ikut terpasang. Pada Opsi B, tambahkan `implementation(files("libs/faceidv5.aar"))` di modul aplikasi.
 
 **Pesan "Akun tidak dapat melakukan eKYC"**
 Server menyatakan akun tidak eligible (`canEkyc = false`). Aplikasi host menerima `Failed("EKYC_NOT_ALLOWED")`.
@@ -440,19 +432,19 @@ Server menyatakan akun tidak eligible (`canEkyc = false`). Aplikasi host menerim
 
 ```
 ekyc-core/                     Library SDK
-  libs/faceidv5.aar            Megvii FaceID 5.7.21A (dikonversi ke AndroidX)
+  libs/faceidv5.aar            Liveness engine 5.7.21A (dikonversi ke AndroidX)
   src/main/java/io/github/fvory/ekyc/
     EzsignEkyc.kt              Entry point publik
     model/EkycModels.kt        EkycConfig, EkycResult
     api/                       Retrofit service, repository, model API
     ui/                        Activity, fragment per langkah, ViewModel
     util/PhoneNumber.kt        Normalisasi nomor handphone +62
-  src/main/res/raw/faceidmodel.bin                Model deteksi wajah Megvii
-  src/main/res/**/liveness_*, livenessv5_sdk_*    Gambar, audio panduan, teks, dan warna layar deteksi Megvii
+  src/main/res/raw/faceidmodel.bin                Model deteksi wajah
+  src/main/res/**/liveness_*, livenessv5_sdk_*    Gambar, audio panduan, teks, dan warna layar deteksi
   src/test/                    Unit test
 sample/                        Aplikasi simulasi
 ```
 
 ## Lisensi
 
-Kode SDK didistribusikan di bawah lisensi MIT; lihat [`LICENSE`](LICENSE). Library dan resource Megvii FaceID (`faceidv5.aar`, `faceidmodel.bin`, `liveness_*`, `livenessv5_sdk_*`) tunduk pada perjanjian lisensi Megvii yang terpisah.
+Kode SDK didistribusikan di bawah lisensi MIT; lihat [`LICENSE`](LICENSE). Liveness engine beserta resource-nya (`faceidv5.aar`, `faceidmodel.bin`, `liveness_*`, `livenessv5_sdk_*`) adalah komponen pihak ketiga yang tunduk pada perjanjian lisensi tersendiri.

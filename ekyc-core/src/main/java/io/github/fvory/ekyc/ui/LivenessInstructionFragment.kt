@@ -143,7 +143,7 @@ internal class LivenessInstructionFragment : Fragment() {
         val message = when {
             upper.contains("AUTHENTICATION_FAIL") || upper.contains("BUNDLEID") ->
                 "The liveness license rejected ${requireContext().packageName}. " +
-                    "Register this package name with the ezSign Megvii account. ($raw)"
+                    "Register this package name with the ezSign liveness license. ($raw)"
             errorCode == MEGVII_USER_CANCEL -> return "Liveness has been cancelled"
             errorCode == MEGVII_NO_CAMERA_PERMISSION ->
                 "Camera permission is required. Please allow camera access and try again."
