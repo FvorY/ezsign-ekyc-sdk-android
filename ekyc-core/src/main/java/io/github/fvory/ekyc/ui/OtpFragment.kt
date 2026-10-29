@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import io.github.fvory.ekyc.databinding.FragmentOtpBinding
+import io.github.fvory.ekyc.util.PhoneNumber
 import kotlinx.coroutines.launch
 
 internal class OtpFragment : Fragment() {
@@ -42,8 +43,8 @@ internal class OtpFragment : Fragment() {
     }
 
     private fun sendOtp() {
-        val phone = binding.etPhone.text?.toString()?.trim().orEmpty()
-        if (phone.length < 9) {
+        val phone = PhoneNumber.normalize(binding.etPhone.text?.toString().orEmpty())
+        if (phone == null) {
             binding.layoutPhone.error = "Nomor handphone tidak valid"
             return
         }
@@ -88,7 +89,7 @@ internal class OtpFragment : Fragment() {
     }
 
     private fun verifyOtp() {
-        val phone = viewModel.phone.ifEmpty { binding.etPhone.text?.toString()?.trim().orEmpty() }
+        val phone = viewModel.phone
         val otp = binding.etOtp.text?.toString()?.trim().orEmpty()
 
         if (phone.isEmpty()) {
