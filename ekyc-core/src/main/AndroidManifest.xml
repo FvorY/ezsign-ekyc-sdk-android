@@ -12,7 +12,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.EzsignEkyc" />
 
-        <!-- Megvii FaceID LV5 Activities -->
+        <!-- Liveness engine activities -->
         <activity
             android:name="com.megvii.lv5.sdk.detect.action.ActionLivenessActivity"
             android:exported="false"

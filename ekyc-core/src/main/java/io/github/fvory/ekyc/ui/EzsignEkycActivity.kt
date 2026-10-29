@@ -91,7 +91,7 @@ internal class EzsignEkycActivity : AppCompatActivity() {
     }
 
     fun navigateToResult() {
-        // Megvii reports success while its own activity is still on top, so this
+        // The liveness engine reports success while its own activity is still on top, so this
         // activity is stopped; wait until it is resumed before committing.
         lifecycleScope.launch {
             withResumed {

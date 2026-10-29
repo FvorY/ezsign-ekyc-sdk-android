@@ -81,7 +81,7 @@ internal class LivenessInstructionFragment : Fragment() {
                     viewModel.bizToken = data.bizToken
                     viewModel.livenessId = data.livenessId
 
-                    launchMegviiSDK(data.bizToken)
+                    launchLivenessEngine(data.bizToken)
                 }
                 .onFailure { e ->
                     binding.progressBar.visibility = View.GONE
@@ -91,7 +91,7 @@ internal class LivenessInstructionFragment : Fragment() {
         }
     }
 
-    private fun launchMegviiSDK(bizToken: String) {
+    private fun launchLivenessEngine(bizToken: String) {
         val activity = requireActivity()
         val config = MegLiveDetectConfig().apply {
             setBizToken(bizToken)
@@ -102,7 +102,7 @@ internal class LivenessInstructionFragment : Fragment() {
         MegLiveManager.getInstance().startDetect(activity, config, object : MegLiveDetectListener {
             override fun onPreDetectFinish(errorCode: Int, errorMessage: String?) {
                 if (errorCode != 1000) {
-                    activity.runOnUiThread { showMegviiError(errorCode, errorMessage) }
+                    activity.runOnUiThread { showLivenessError(errorCode, errorMessage) }
                 }
             }
 
@@ -111,7 +111,7 @@ internal class LivenessInstructionFragment : Fragment() {
                     if (errorCode == 1000) {
                         (activity as? EzsignEkycActivity)?.navigateToResult()
                     } else {
-                        showMegviiError(errorCode, errorMessage)
+                        showLivenessError(errorCode, errorMessage)
                     }
                 }
             }
@@ -126,30 +126,30 @@ internal class LivenessInstructionFragment : Fragment() {
         })
     }
 
-    private fun showMegviiError(errorCode: Int, errorMessage: String?) {
+    private fun showLivenessError(errorCode: Int, errorMessage: String?) {
         if (!isAdded) return
         AlertDialog.Builder(requireContext())
-            .setTitle(if (errorCode == MEGVII_USER_CANCEL) "Liveness Cancelled" else "Liveness Check Failed")
-            .setMessage(describeMegviiError(errorCode, errorMessage))
+            .setTitle(if (errorCode == LIVENESS_USER_CANCEL) "Liveness Cancelled" else "Liveness Check Failed")
+            .setMessage(describeLivenessError(errorCode, errorMessage))
             .setPositiveButton("OK", null)
             .show()
     }
 
-    // Same grouping as the ezSign Flutter app. Megvii validates its license against the host
+    // Same grouping as the ezSign Flutter app. The liveness engine validates its license against the host
     // app's package name, so AUTHENTICATION_FAIL / bundleid_error names the rejected package.
-    private fun describeMegviiError(errorCode: Int, errorMessage: String?): String {
+    private fun describeLivenessError(errorCode: Int, errorMessage: String?): String {
         val raw = errorMessage.orEmpty()
         val upper = raw.uppercase()
         val message = when {
             upper.contains("AUTHENTICATION_FAIL") || upper.contains("BUNDLEID") ->
                 "The liveness license rejected ${requireContext().packageName}. " +
                     "Register this package name with the ezSign liveness license. ($raw)"
-            errorCode == MEGVII_USER_CANCEL -> return "Liveness has been cancelled"
-            errorCode == MEGVII_NO_CAMERA_PERMISSION ->
+            errorCode == LIVENESS_USER_CANCEL -> return "Liveness has been cancelled"
+            errorCode == LIVENESS_NO_CAMERA_PERMISSION ->
                 "Camera permission is required. Please allow camera access and try again."
-            errorCode in MEGVII_DEVICE_NOT_SUPPORTED ->
+            errorCode in LIVENESS_DEVICE_NOT_SUPPORTED ->
                 "Your device is currently not supported. Please try using a different device."
-            errorCode in MEGVII_RETRYABLE ->
+            errorCode in LIVENESS_RETRYABLE ->
                 "We couldn't complete the liveness check. Please try again in a few moments."
             raw.isNotBlank() -> raw
             else -> "We couldn't complete the liveness check."
@@ -158,10 +158,10 @@ internal class LivenessInstructionFragment : Fragment() {
     }
 
     private companion object {
-        const val MEGVII_USER_CANCEL = 1011
-        const val MEGVII_NO_CAMERA_PERMISSION = 1012
-        val MEGVII_DEVICE_NOT_SUPPORTED = setOf(1004, 1009, 1013)
-        val MEGVII_RETRYABLE = setOf(1001, 1002, 1003, 1005, 1006, 1007, 1008, 1010, 1014, 1016, 1017, 1018, 1019)
+        const val LIVENESS_USER_CANCEL = 1011
+        const val LIVENESS_NO_CAMERA_PERMISSION = 1012
+        val LIVENESS_DEVICE_NOT_SUPPORTED = setOf(1004, 1009, 1013)
+        val LIVENESS_RETRYABLE = setOf(1001, 1002, 1003, 1005, 1006, 1007, 1008, 1010, 1014, 1016, 1017, 1018, 1019)
     }
 
     override fun onDestroyView() {

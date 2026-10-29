@@ -8,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        // Megvii liveness only works for package names registered on the ezSign license.
+        // Liveness only works for package names registered on the ezSign license.
         // Override with: ./gradlew :sample:assembleDebug -PekycApplicationId=<registered.package>
         applicationId = providers.gradleProperty("ekycApplicationId")
             .getOrElse("com.sign.livenessdemo")
