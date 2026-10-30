@@ -113,6 +113,18 @@ Liveness engine ikut di repo ini sebagai file `faceidv5/faceidv5.aar`, dibungkus
 
 4. Pastikan version catalog proyek Anda punya alias yang dipakai `ekyc-core/build.gradle.kts` (lihat [`gradle/libs.versions.toml`](gradle/libs.versions.toml)). Cara lainnya, ganti alias tersebut dengan koordinat dependensi langsung.
 
+5. Deklarasikan plugin Android Library di `build.gradle.kts` root proyek Anda. Proyek baru dari Android Studio biasanya hanya mendeklarasikan plugin application dan Kotlin, sehingga build gagal dengan `Error resolving plugin [id: 'com.android.library', …] … already on the classpath with an unknown version`:
+
+   ```kotlin
+   plugins {
+       alias(libs.plugins.android.application) apply false
+       alias(libs.plugins.android.library) apply false // tambahkan baris ini
+       alias(libs.plugins.kotlin.android) apply false
+   }
+   ```
+
+   Pastikan versi `agp` dan `kotlin` di catalog sama dengan yang dipakai aplikasi Anda.
+
 Dengan cara ini, AAR liveness engine, model, resource layar deteksi, dan aturan R8 ikut terpasang otomatis, baik untuk build debug maupun release (termasuk dengan minify dan shrink resource).
 
 ## Mulai cepat
